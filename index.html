@@ -1,0 +1,801 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Management System - SME Operations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .animate-pulse-critical { animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    
+    @keyframes lightning-glow {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9)) drop-shadow(0 0 14px rgba(239, 68, 68, 0.6)); }
+      50% { filter: drop-shadow(0 0 16px rgba(251, 191, 36, 1)) drop-shadow(0 0 24px rgba(245, 158, 11, 0.9)); }
+    }
+    .lightning-effect {
+      animation: lightning-glow 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+
+  <!-- ================= 1. LOGIN SCREEN (STRICT AUTH) ================= -->
+  <div id="loginScreen" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-md p-8 rounded-2xl shadow-2xl space-y-6">
+      <div class="text-center space-y-3">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 flex items-center justify-center mx-auto shadow-xl shadow-amber-500/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-950 lightning-effect fill-current" viewBox="0 0 256 256">
+            <path d="M215.79,118.17a8,8,0,0,0-7.79-6.17H152V40a8,8,0,0,0-13.66-5.66l-96,96a8,8,0,0,0,5.66,13.66H104v72a8,8,0,0,0,13.66,5.66l96-96A8,8,0,0,0,215.79,118.17ZM120,200.69V136a8,8,0,0,0-8-8H59.31L136,47.31V112a8,8,0,0,0,8,8h52.69Z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-white tracking-wider">POWER MANAGEMENT SYSTEM</h2>
+          <p class="text-xs text-slate-400 mt-0.5">SME Operations • Telkomsel / Huawei</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="space-y-1">
+          <label class="text-slate-400 font-medium">Username / Operator ID</label>
+          <div class="relative">
+            <i class="ph ph-user absolute left-3 top-2.5 text-slate-500 text-base"></i>
+            <input type="text" id="loginUser" placeholder="Masukkan username" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400 font-medium">Password</label>
+          <div class="relative">
+            <i class="ph ph-lock-key absolute left-3 top-2.5 text-slate-500 text-base"></i>
+            <input type="password" id="loginPass" placeholder="Masukkan password" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        
+        <!-- Error Alert -->
+        <div id="loginError" class="p-2.5 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs hidden flex items-center gap-2">
+          <i class="ph ph-warning-circle text-base flex-shrink-0"></i>
+          <span>Username atau password tidak valid!</span>
+        </div>
+
+        <button type="button" onclick="performStrictLogin()" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-lg shadow-lg shadow-amber-500/20 transition active:scale-95">
+          Sign In ke Operasional
+        </button>
+      </div>
+      <div class="text-center text-[11px] text-slate-500">
+        Private Intranet Portal • SME Access Only
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. MAIN APP SCREEN ================= -->
+  <div id="appScreen" class="hidden min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40 px-4 lg:px-6 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3.5">
+        <button onclick="toggleSidebar()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700">
+          <i class="ph ph-list text-xl"></i>
+        </button>
+        
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-200 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-950 lightning-effect fill-current" viewBox="0 0 256 256">
+              <path d="M215.79,118.17a8,8,0,0,0-7.79-6.17H152V40a8,8,0,0,0-13.66-5.66l-96,96a8,8,0,0,0,5.66,13.66H104v72a8,8,0,0,0,13.66,5.66l96-96A8,8,0,0,0,215.79,118.17ZM120,200.69V136a8,8,0,0,0-8-8H59.31L136,47.31V112a8,8,0,0,0,8,8h52.69Z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-xs sm:text-sm tracking-wider text-white" id="headerTitle">DASHBOARD OVERVIEW</h1>
+            <p class="text-[10px] text-slate-400">SME Operations • <span class="text-amber-400 font-semibold">Reliable Energy</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="file" id="masterInput" class="hidden" accept=".xlsx, .xls, .csv" onchange="handleMasterImport(event)">
+        <button onclick="document.getElementById('masterInput').click()" class="hidden sm:flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 transition">
+          <i class="ph ph-database text-blue-400"></i>
+          <span>Import Site</span>
+        </button>
+
+        <input type="file" id="nmsInput" class="hidden" accept=".xlsx, .xls, .csv" onchange="handleNMSImport(event)">
+        <button onclick="document.getElementById('nmsInput').click()" class="flex items-center gap-1 bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg shadow transition font-semibold">
+          <i class="ph ph-broadcast"></i>
+          <span>Import NMS</span>
+        </button>
+
+        <button onclick="openModal()" class="flex items-center gap-1 bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-lg shadow transition font-semibold">
+          <i class="ph ph-plus-circle"></i>
+          <span class="hidden md:inline">Tambah Site</span>
+        </button>
+
+        <button onclick="performLogout()" title="Logout" class="p-2 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-400 rounded-lg transition border border-slate-700 ml-1">
+          <i class="ph ph-sign-out text-lg"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sidebar Drawer -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
+    <aside id="sidebarDrawer" class="fixed top-0 left-0 bottom-0 w-64 bg-slate-900 border-r border-slate-800 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col justify-between">
+      <div class="p-4 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 256 256">
+              <path d="M215.79,118.17a8,8,0,0,0-7.79-6.17H152V40a8,8,0,0,0-13.66-5.66l-96,96a8,8,0,0,0,5.66,13.66H104v72a8,8,0,0,0,13.66,5.66l96-96A8,8,0,0,0,215.79,118.17Z"></path>
+            </svg>
+            <span class="font-bold text-sm text-white">SME NAVIGATION</span>
+          </div>
+          <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-lg"></i></button>
+        </div>
+
+        <nav class="space-y-1 text-xs">
+          <button onclick="switchView('view-dashboard', 'DASHBOARD OVERVIEW', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 transition">
+            <i class="ph ph-squares-four text-lg"></i>
+            <span class="font-semibold">Dashboard</span>
+          </button>
+          <button onclick="switchView('view-datasite', 'MASTER DATA SITE', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="ph ph-database text-lg"></i>
+            <span class="font-semibold">Data Site</span>
+          </button>
+          <button onclick="switchView('view-nms', 'LIVE NMS QUERY & ALARM', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="ph ph-broadcast text-lg"></i>
+            <span class="font-semibold">NMS Alarm</span>
+          </button>
+          <button onclick="switchView('view-maintenance', 'MAINTENANCE & 2ND LEVEL SUPPORT', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="ph ph-wrench text-lg"></i>
+            <span class="font-semibold">Maintenance</span>
+          </button>
+          <button onclick="switchView('view-pm', 'PREVENTIVE MAINTENANCE (PM)', this)" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="ph ph-calendar-check text-lg"></i>
+            <span class="font-semibold">Jadwal PM</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 space-y-2">
+        <div class="flex items-center gap-2 text-xs">
+          <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+          <span class="text-slate-400">User: <strong class="text-white">Aldi (SME)</strong></span>
+        </div>
+        <button onclick="performLogout()" class="w-full py-2 bg-slate-800 hover:bg-red-600/20 text-red-400 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
+          <i class="ph ph-sign-out"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Dynamic Views -->
+    <main class="max-w-7xl w-full mx-auto px-4 lg:px-6 pt-5 pb-12 flex-1">
+      
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="view-dashboard" class="space-y-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider">Total Sites</span>
+              <i class="ph ph-broadcast text-base text-blue-400"></i>
+            </div>
+            <h3 id="kpi-total" class="text-2xl font-black text-white">3</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider">Normal (PLN OK)</span>
+              <i class="ph ph-shield-check text-base text-emerald-400"></i>
+            </div>
+            <h3 id="kpi-normal" class="text-2xl font-black text-emerald-400">1</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider">Warning (Backup)</span>
+              <i class="ph ph-battery-warning text-base text-amber-400"></i>
+            </div>
+            <h3 id="kpi-warning" class="text-2xl font-black text-amber-400">1</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+            <div class="flex items-center justify-between text-slate-400 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider">Critical Alert</span>
+              <i class="ph ph-warning-octagon text-base text-red-400"></i>
+            </div>
+            <h3 id="kpi-critical" class="text-2xl font-black text-red-400">1</h3>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-col items-center justify-center">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 self-start">Power Health Status</span>
+            <div class="relative w-40 h-40">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+          <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                <span class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="ph ph-warning-circle text-base"></i> Priority Action List (Immediate Dispatch)
+                </span>
+                <span id="lastNmsTime" class="text-[10px] text-slate-400">NMS Sync: Standby</span>
+              </div>
+              <div id="priorityList" class="space-y-2 overflow-y-auto max-h-40 pr-1"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MASTER DATA SITE VIEW -->
+      <section id="view-datasite" class="hidden space-y-4">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+          <div class="p-3.5 border-b border-slate-800 flex flex-wrap justify-between items-center gap-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Database Master Site Power</h3>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari ID, Nama Site..." class="bg-slate-950 border border-slate-800 text-xs px-3 py-1.5 rounded-lg text-slate-200 focus:outline-none focus:border-amber-500 w-64">
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950/90 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="py-3 px-3.5">Site Info</th>
+                  <th class="py-3 px-3.5">PLN</th>
+                  <th class="py-3 px-3.5">Genset</th>
+                  <th class="py-3 px-3.5">Rectifier & Battery</th>
+                  <th class="py-3 px-3.5">Status</th>
+                  <th class="py-3 px-3.5">Health</th>
+                  <th class="py-3 px-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="siteTableBody" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. NMS QUERY ALARM VIEW -->
+      <section id="view-nms" class="hidden space-y-4">
+        <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white">NMS Alarm Query Feed</h3>
+              <p class="text-xs text-slate-400">Sinkronisasi log query Huawei NCE / U2000 per 10–30 menit.</p>
+            </div>
+            <button onclick="document.getElementById('nmsInput').click()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow">
+              <i class="ph ph-upload-simple mr-1"></i> Tarik Log NMS (.xlsx/.csv)
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950 text-slate-400 text-[10px] uppercase">
+                <tr><th class="py-2.5 px-3">Site ID</th><th class="py-2.5 px-3">Alarm Terdeteksi</th><th class="py-2.5 px-3">Severity</th><th class="py-2.5 px-3">Action Required</th></tr>
+              </thead>
+              <tbody id="nmsAlarmTable" class="divide-y divide-slate-800/60">
+                <tr><td colspan="4" class="text-center py-6 text-slate-500 italic">Belum ada file log alarm yang diunggah.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. MAINTENANCE VIEW -->
+      <section id="view-maintenance" class="hidden space-y-4">
+        <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-sm font-bold text-white">2nd Level Support & Trouble Ticket CME/Power</h3>
+          <p class="text-xs text-slate-400">Daftar eskalasi penanganan site kritis untuk koordinasi tim lapangan.</p>
+          <div id="maintenanceTicketList" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- 5. PREVENTIVE MAINTENANCE (PM) VIEW -->
+      <section id="view-pm" class="hidden space-y-4">
+        <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-800 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white">Jadwal & Checklist Preventive Maintenance (PM)</h3>
+              <p class="text-xs text-slate-400">Monitoring siklus servis berkala Genset Himoinsa, Baterai, & Rectifier.</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <input type="file" id="pmInput" class="hidden" accept=".xlsx, .xls, .csv" onchange="handlePMImport(event)">
+              <button onclick="document.getElementById('pmInput').click()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow flex items-center gap-1.5">
+                <i class="ph ph-file-arrow-up text-base"></i>
+                <span>Import Data PM (.xlsx)</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Jadwal PM</span>
+              <div id="pm-stat-total" class="text-lg font-bold text-white mt-0.5">3</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+              <span class="text-[10px] text-amber-400 uppercase font-semibold">Due / Pending</span>
+              <div id="pm-stat-pending" class="text-lg font-bold text-amber-400 mt-0.5">2</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+              <span class="text-[10px] text-emerald-400 uppercase font-semibold">Completed</span>
+              <div id="pm-stat-completed" class="text-lg font-bold text-emerald-400 mt-0.5">1</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="pmScheduleList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Tambah/Edit Data Site -->
+  <div id="siteModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 id="modalTitle" class="text-sm font-bold text-white">Tambah Data Site</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-lg"></i></button>
+      </div>
+      <form id="siteForm" onsubmit="saveSite(event)" class="grid grid-cols-2 gap-3 text-xs">
+        <input type="hidden" id="editIndex">
+        <div class="space-y-1">
+          <label class="text-slate-400">Site ID *</label>
+          <input type="text" id="formId" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Site Name *</label>
+          <input type="text" id="formName" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Cluster</label>
+          <input type="text" id="formCluster" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">PLN</label>
+          <input type="text" id="formPln" placeholder="33 kVA" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Genset</label>
+          <input type="text" id="formGenset" placeholder="Himoinsa 40 kVA" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Rectifier</label>
+          <input type="text" id="formRect" placeholder="Huawei 200A" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Battery</label>
+          <input type="text" id="formBatt" placeholder="Lithium 200Ah" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="space-y-1">
+          <label class="text-slate-400">Health (%)</label>
+          <input type="number" id="formHealth" min="0" max="100" value="95" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+        </div>
+        <div class="col-span-2 space-y-1">
+          <label class="text-slate-400">Status</label>
+          <select id="formStatus" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+            <option value="Normal">Normal (PLN OK)</option>
+            <option value="Warning">Warning (Backup)</option>
+            <option value="Critical">Critical (Discharge)</option>
+          </select>
+        </div>
+        <div class="col-span-2 pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let sites = [
+      { id: "BGR001", name: "Pajajaran Hub", cluster: "Bogor Timur", pln: "33 kVA", genset: "Himoinsa 40 kVA", rect: "Huawei 200A", batt: "Lithium 200Ah", health: 98, status: "Normal", backupTime: "N/A", lastAlarm: "-" },
+      { id: "BGR002", name: "Sukaraja Tower", cluster: "Bogor Utara", pln: "23 kVA", genset: "Himoinsa 35 kVA", rect: "Huawei 150A", batt: "VRLA 100Ah", health: 82, status: "Warning", backupTime: "3.2 Jam", lastAlarm: "Mains Fail" },
+      { id: "JKT045", name: "Saharjo Apex", cluster: "Jakarta Selatan", pln: "41.5 kVA", genset: "Himoinsa 50 kVA", rect: "Huawei 300A", batt: "Lithium 300Ah", health: 65, status: "Critical", backupTime: "0.8 Jam", lastAlarm: "Low Battery" }
+    ];
+
+    let pmData = [
+      { id: "BGR001", name: "Pajajaran Hub", date: "2026-08-28", pic: "FOP Team Bogor", status: "Due", items: "Genset Oil & Filter Check, Battery Capacity Test" },
+      { id: "BGR002", name: "Sukaraja Tower", date: "2026-08-25", pic: "Teknisi CME MKU", status: "Due", items: "Rectifier Fan Clean, PLN Grounding Measurement" },
+      { id: "JKT045", name: "Saharjo Apex", date: "2026-08-15", pic: "SME Support Jakarta", status: "Completed", items: "Deepsea Controller Calibration, Battery Cell Balancing" }
+    ];
+
+    let nmsLogs = [];
+    let chartInstance = null;
+
+    // --- VALIDASI LOGIN KETAT ---
+    function performStrictLogin() {
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      const errBox = document.getElementById('loginError');
+
+      // Validasi kredensial wajib presisi
+      if (user === 'sme.power' && pass === 'huawei2026') {
+        errBox.classList.add('hidden');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').classList.remove('hidden');
+        renderDashboard();
+      } else {
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    function performLogout() {
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginError').classList.add('hidden');
+      document.getElementById('appScreen').classList.add('hidden');
+      document.getElementById('loginScreen').style.display = 'flex';
+    }
+
+    // --- SIDEBAR & NAVIGASI VIEW ---
+    function toggleSidebar() {
+      const drawer = document.getElementById('sidebarDrawer');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (drawer.classList.contains('-translate-x-full')) {
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        drawer.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function switchView(viewId, title, btnElement) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(viewId).classList.remove('hidden');
+      document.getElementById('headerTitle').innerText = title;
+
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.className = "nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition";
+      });
+      if (btnElement) {
+        btnElement.className = "nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 transition";
+      }
+
+      toggleSidebar();
+      if (viewId === 'view-datasite') renderTable(sites);
+      if (viewId === 'view-maintenance') renderMaintenanceView();
+      if (viewId === 'view-pm') renderPMView();
+    }
+
+    // --- AUTO-MAPPER ENGINE (EXCEL) ---
+    function normalizeKey(str) { return str.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+    function findVal(row, candidates) {
+      const keys = Object.keys(row);
+      for (const c of candidates) {
+        const found = keys.find(k => normalizeKey(k) === normalizeKey(c));
+        if (found && row[found] !== undefined) return row[found];
+      }
+      return null;
+    }
+
+    function handleMasterImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          let count = 0;
+          json.forEach(row => {
+            const id = findVal(row, ['siteid', 'id', 'site_id', 'site', 'idsite']);
+            const name = findVal(row, ['sitename', 'name', 'site_name', 'namasite']) || id;
+            if (id) {
+              const cluster = findVal(row, ['cluster', 'region', 'area']) || '-';
+              const pln = findVal(row, ['pln', 'plnpower', 'kapasitaspln']) || '-';
+              const genset = findVal(row, ['genset', 'gensetmodel', 'kapasitasgenset']) || '-';
+              const rect = findVal(row, ['rectifier', 'rect', 'rectifiermodel']) || '-';
+              const batt = findVal(row, ['battery', 'batt', 'tipe_baterai']) || '-';
+              const health = parseInt(findVal(row, ['health', 'healthscore'])) || 90;
+
+              const idx = sites.findIndex(s => s.id.toLowerCase() === String(id).toLowerCase());
+              const siteData = { id: String(id), name: String(name), cluster, pln, genset, rect, batt, health, status: "Normal", backupTime: "N/A", lastAlarm: "-" };
+              if (idx >= 0) sites[idx] = { ...sites[idx], ...siteData };
+              else sites.push(siteData);
+              count++;
+            }
+          });
+          renderDashboard();
+          alert(`Sukses! ${count} Master Site berhasil diproses.`);
+        } catch (err) { alert("File Excel tidak valid."); }
+      };
+      reader.readAsArrayBuffer(file);
+      e.target.value = '';
+    }
+
+    function handleNMSImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          nmsLogs = [];
+          json.forEach(row => {
+            const id = findVal(row, ['siteid', 'id', 'site_id', 'ne_name']);
+            const alarm = findVal(row, ['alarmname', 'alarm', 'alarm_name']);
+            const severity = findVal(row, ['severity', 'level']) || 'Major';
+
+            if (id && alarm) {
+              nmsLogs.push({ id: String(id), alarm: String(alarm), severity: String(severity) });
+              const s = sites.find(x => x.id.toLowerCase() === String(id).toLowerCase());
+              if (s) {
+                const str = String(alarm).toLowerCase();
+                s.lastAlarm = String(alarm);
+                if (str.includes('low') || str.includes('disconnect') || str.includes('lvbd') || String(severity).toLowerCase().includes('crit')) {
+                  s.status = 'Critical';
+                  s.backupTime = '0.5 - 1.5 Jam';
+                  s.health = Math.min(s.health, 60);
+                } else if (str.includes('mains') || str.includes('fail') || str.includes('blackout')) {
+                  s.status = 'Warning';
+                  s.backupTime = '3 - 4 Jam';
+                  s.health = Math.min(s.health, 80);
+                }
+              }
+            }
+          });
+          document.getElementById('lastNmsTime').innerText = `NMS Sync: ${new Date().toLocaleTimeString()} WIB`;
+          renderNmsTable();
+          renderDashboard();
+          alert(`Berhasil! ${nmsLogs.length} Alarm NMS diproses.`);
+        } catch (err) { alert("File NMS tidak valid."); }
+      };
+      reader.readAsArrayBuffer(file);
+      e.target.value = '';
+    }
+
+    function handlePMImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+          const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          let count = 0;
+          json.forEach(row => {
+            const id = findVal(row, ['siteid', 'id', 'site_id', 'site', 'idsite']);
+            const name = findVal(row, ['sitename', 'name', 'site_name']) || id;
+            if (id) {
+              const date = findVal(row, ['date', 'jadwal', 'tanggal', 'pm_date']) || '2026-09-01';
+              const pic = findVal(row, ['pic', 'teknisi', 'vendor', 'team']) || 'FOP Team';
+              const status = findVal(row, ['status', 'statuspm']) || 'Due';
+              const items = findVal(row, ['checklist', 'items', 'aktivitas', 'scope']) || 'Servis Rutin Genset & Baterai';
+
+              const existingIdx = pmData.findIndex(p => p.id.toLowerCase() === String(id).toLowerCase());
+              const pmRecord = { id: String(id), name: String(name), date: String(date), pic: String(pic), status: String(status), items: String(items) };
+
+              if (existingIdx >= 0) pmData[existingIdx] = pmRecord;
+              else pmData.unshift(pmRecord);
+              count++;
+            }
+          });
+          renderPMView();
+          alert(`Sukses! ${count} Data PM berhasil diimpor.`);
+        } catch (err) { alert("File PM tidak valid."); }
+      };
+      reader.readAsArrayBuffer(file);
+      e.target.value = '';
+    }
+
+    function completePM(idx) {
+      pmData[idx].status = 'Completed';
+      const site = sites.find(s => s.id.toLowerCase() === pmData[idx].id.toLowerCase());
+      if (site) {
+        site.health = 98;
+        site.status = 'Normal';
+      }
+      renderPMView();
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      const normalCount = sites.filter(s => s.status === 'Normal').length;
+      const warningCount = sites.filter(s => s.status === 'Warning').length;
+      const criticalCount = sites.filter(s => s.status === 'Critical').length;
+
+      document.getElementById('kpi-total').innerText = sites.length;
+      document.getElementById('kpi-normal').innerText = normalCount;
+      document.getElementById('kpi-warning').innerText = warningCount;
+      document.getElementById('kpi-critical').innerText = criticalCount;
+
+      renderChart(normalCount, warningCount, criticalCount);
+      renderPriorityList();
+      renderTable(sites);
+    }
+
+    function renderChart(n, w, c) {
+      const ctx = document.getElementById('statusChart');
+      if (!ctx) return;
+      if (chartInstance) chartInstance.destroy();
+      try {
+        chartInstance = new Chart(ctx.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Normal', 'Warning', 'Critical'],
+            datasets: [{ data: [n, w, c], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '72%' }
+        });
+      } catch (err) {}
+    }
+
+    function renderPriorityList() {
+      const pList = document.getElementById('priorityList');
+      const criticals = sites.filter(s => s.status === 'Critical' || s.status === 'Warning');
+      if (criticals.length === 0) {
+        pList.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">Semua site normal.</p>';
+        return;
+      }
+      pList.innerHTML = criticals.map(s => `
+        <div class="flex items-center justify-between p-2 rounded-lg ${s.status === 'Critical' ? 'bg-red-500/10 border border-red-500/30' : 'bg-amber-500/10 border border-amber-500/30'}">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full ${s.status === 'Critical' ? 'bg-red-500 animate-pulse-critical' : 'bg-amber-400'}"></span>
+            <div>
+              <span class="font-bold text-white">${s.id}</span> - <span class="text-slate-300">${s.name}</span>
+              <span class="text-[10px] text-slate-400 block">${s.lastAlarm} | Genset: ${s.genset}</span>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 text-[10px] font-bold rounded ${s.status === 'Critical' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}">Est: ${s.backupTime}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('siteTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = data.map((s, idx) => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="py-3 px-3.5 font-medium text-white">${s.id} <span class="text-slate-400 block text-[11px]">${s.name} (${s.cluster})</span></td>
+          <td class="py-3 px-3.5 text-slate-300">${s.pln}</td>
+          <td class="py-3 px-3.5 text-slate-300">${s.genset}</td>
+          <td class="py-3 px-3.5 text-slate-300">${s.rect} <span class="block text-[10px] text-slate-500">${s.batt}</span></td>
+          <td class="py-3 px-3.5"><span class="px-2 py-0.5 text-[10px] rounded-full font-semibold ${s.status === 'Critical' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : s.status === 'Warning' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">${s.status}</span></td>
+          <td class="py-3 px-3.5 font-bold ${s.health > 80 ? 'text-emerald-400' : s.health > 60 ? 'text-amber-400' : 'text-red-400'}">${s.health}%</td>
+          <td class="py-3 px-3.5 text-center">
+            <div class="flex justify-center gap-1.5">
+              <button onclick="openModal(${idx})" class="text-blue-400 hover:text-blue-300 p-1"><i class="ph ph-pencil-simple text-base"></i></button>
+              <button onclick="deleteSite(${idx})" class="text-red-400 hover:text-red-300 p-1"><i class="ph ph-trash text-base"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderNmsTable() {
+      const tbody = document.getElementById('nmsAlarmTable');
+      if (nmsLogs.length === 0) return;
+      tbody.innerHTML = nmsLogs.map(l => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="py-2.5 px-3 font-bold text-white">${l.id}</td>
+          <td class="py-2.5 px-3 text-amber-300">${l.alarm}</td>
+          <td class="py-2.5 px-3 text-red-400 font-semibold">${l.severity}</td>
+          <td class="py-2.5 px-3 text-slate-400">Verifikasi FOP Lapangan</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMaintenanceView() {
+      const list = document.getElementById('maintenanceTicketList');
+      const alerts = sites.filter(s => s.status !== 'Normal');
+      if (alerts.length === 0) {
+        list.innerHTML = '<p class="text-xs text-slate-500 italic py-4">Tidak ada tiket maintenance aktif.</p>';
+        return;
+      }
+      list.innerHTML = alerts.map(s => `
+        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+          <div>
+            <div class="font-bold text-white text-xs">${s.id} - ${s.name}</div>
+            <div class="text-[11px] text-slate-400">Issue: ${s.lastAlarm} | Genset: ${s.genset} | Rectifier: ${s.rect}</div>
+          </div>
+          <button onclick="alert('Support terkirim untuk ' + '${s.id}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition">
+            Dispatch Support
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderPMView() {
+      const total = pmData.length;
+      const completed = pmData.filter(p => p.status.toLowerCase() === 'completed').length;
+      const pending = total - completed;
+
+      document.getElementById('pm-stat-total').innerText = total;
+      document.getElementById('pm-stat-pending').innerText = pending;
+      document.getElementById('pm-stat-completed').innerText = completed;
+
+      const list = document.getElementById('pmScheduleList');
+      if (pmData.length === 0) {
+        list.innerHTML = '<p class="col-span-2 text-xs text-slate-500 italic py-4 text-center">Belum ada data PM diimpor.</p>';
+        return;
+      }
+
+      list.innerHTML = pmData.map((p, idx) => {
+        const isDone = p.status.toLowerCase() === 'completed';
+        return `
+          <div class="p-4 bg-slate-950 border ${isDone ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-slate-800'} rounded-xl space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="font-bold text-sm text-white">${p.id}</span>
+                <span class="text-xs text-slate-300 block font-medium">${p.name}</span>
+                <span class="text-[11px] text-slate-500">PIC: ${p.pic} • Target: ${p.date}</span>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${isDone ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30'}">
+                ${isDone ? 'Completed' : 'Due / Pending'}
+              </span>
+            </div>
+            <div class="text-[11px] bg-slate-900/60 p-2 rounded border border-slate-800/80 text-slate-300">
+              <span class="text-slate-500 block text-[10px] uppercase font-semibold">Scope & Item Servis:</span>
+              ${p.items}
+            </div>
+            <div class="flex justify-end pt-1">
+              ${!isDone ? `
+                <button onclick="completePM(${idx})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                  <i class="ph ph-check-circle text-sm"></i> Tandai Selesai
+                </button>
+              ` : `
+                <span class="text-[11px] text-emerald-400 flex items-center gap-1">
+                  <i class="ph ph-check-fat"></i> Servis Terverifikasi
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      renderTable(sites.filter(s => s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.cluster.toLowerCase().includes(q)));
+    }
+
+    function openModal(editIdx = null) {
+      document.getElementById('siteModal').classList.remove('hidden');
+      if (editIdx !== null) {
+        document.getElementById('modalTitle').innerText = 'Edit Data Site';
+        document.getElementById('editIndex').value = editIdx;
+        const s = sites[editIdx];
+        document.getElementById('formId').value = s.id;
+        document.getElementById('formName').value = s.name;
+        document.getElementById('formCluster').value = s.cluster;
+        document.getElementById('formPln').value = s.pln;
+        document.getElementById('formGenset').value = s.genset;
+        document.getElementById('formRect').value = s.rect;
+        document.getElementById('formBatt').value = s.batt;
+        document.getElementById('formHealth').value = s.health;
+        document.getElementById('formStatus').value = s.status;
+      } else {
+        document.getElementById('modalTitle').innerText = 'Tambah Data Site';
+        document.getElementById('siteForm').reset();
+        document.getElementById('editIndex').value = '';
+      }
+    }
+
+    function closeModal() { document.getElementById('siteModal').classList.add('hidden'); }
+
+    function saveSite(e) {
+      e.preventDefault();
+      const idx = document.getElementById('editIndex').value;
+      const data = {
+        id: document.getElementById('formId').value,
+        name: document.getElementById('formName').value,
+        cluster: document.getElementById('formCluster').value,
+        pln: document.getElementById('formPln').value,
+        genset: document.getElementById('formGenset').value,
+        rect: document.getElementById('formRect').value,
+        batt: document.getElementById('formBatt').value,
+        health: parseInt(document.getElementById('formHealth').value),
+        status: document.getElementById('formStatus').value,
+        backupTime: document.getElementById('formStatus').value === 'Normal' ? 'N/A' : 'Manual Set',
+        lastAlarm: '-'
+      };
+      if (idx !== '') sites[idx] = { ...sites[idx], ...data };
+      else sites.unshift(data);
+      closeModal();
+      renderDashboard();
+    }
+
+    function deleteSite(idx) {
+      if (confirm(`Hapus site ${sites[idx].id}?`)) {
+        sites.splice(idx, 1);
+        renderDashboard();
+      }
+    }
+  </script>
+</body>
+</html>
