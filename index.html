@@ -8,6 +8,11 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
+  <!-- Firebase Cloud SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
   <style>
     @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     .animate-pulse-critical { animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
@@ -23,7 +28,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
 
-  <!-- ================= 1. LOGIN SCREEN (STRICT AUTH) ================= -->
+  <!-- ================= 1. LOGIN SCREEN ================= -->
   <div id="loginScreen" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-md p-8 rounded-2xl shadow-2xl space-y-6">
       <div class="text-center space-y-3">
@@ -34,7 +39,7 @@
         </div>
         <div>
           <h2 class="text-xl font-black text-white tracking-wider">POWER MANAGEMENT SYSTEM</h2>
-          <p class="text-xs text-slate-400 mt-0.5">SME Operations • Telkomsel / Huawei</p>
+          <p class="text-xs text-slate-400 mt-0.5">SME Operations • SME JABO Region</p>
         </div>
       </div>
 
@@ -43,18 +48,17 @@
           <label class="text-slate-400 font-medium">Username / Operator ID</label>
           <div class="relative">
             <i class="ph ph-user absolute left-3 top-2.5 text-slate-500 text-base"></i>
-            <input type="text" id="loginUser" placeholder="Masukkan username" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
+            <input type="text" id="loginUser" placeholder="sme.power" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
           </div>
         </div>
         <div class="space-y-1">
           <label class="text-slate-400 font-medium">Password</label>
           <div class="relative">
             <i class="ph ph-lock-key absolute left-3 top-2.5 text-slate-500 text-base"></i>
-            <input type="password" id="loginPass" placeholder="Masukkan password" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
+            <input type="password" id="loginPass" placeholder="huawei2026" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 pl-9 pr-3 text-white focus:outline-none focus:border-amber-500">
           </div>
         </div>
         
-        <!-- Error Alert -->
         <div id="loginError" class="p-2.5 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs hidden flex items-center gap-2">
           <i class="ph ph-warning-circle text-base flex-shrink-0"></i>
           <span>Username atau password tidak valid!</span>
@@ -87,7 +91,12 @@
             </svg>
           </div>
           <div>
-            <h1 class="font-extrabold text-xs sm:text-sm tracking-wider text-white" id="headerTitle">DASHBOARD OVERVIEW</h1>
+            <div class="flex items-center gap-2">
+              <h1 class="font-extrabold text-xs sm:text-sm tracking-wider text-white" id="headerTitle">DASHBOARD OVERVIEW</h1>
+              <span id="cloudIndicator" class="px-2 py-0.5 text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Cloud JABO Sync
+              </span>
+            </div>
             <p class="text-[10px] text-slate-400">SME Operations • <span class="text-amber-400 font-semibold">Reliable Energy</span></p>
           </div>
         </div>
@@ -157,7 +166,7 @@
 
       <div class="p-4 border-t border-slate-800 space-y-2">
         <div class="flex items-center gap-2 text-xs">
-          <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+          <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
           <span class="text-slate-400">User: <strong class="text-white">Aldi (SME)</strong></span>
         </div>
         <button onclick="performLogout()" class="w-full py-2 bg-slate-800 hover:bg-red-600/20 text-red-400 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
@@ -168,8 +177,7 @@
 
     <!-- Main Dynamic Views -->
     <main class="max-w-7xl w-full mx-auto px-4 lg:px-6 pt-5 pb-12 flex-1">
-      
-      <!-- 1. DASHBOARD VIEW -->
+      <!-- 1. DASHBOARD -->
       <section id="view-dashboard" class="space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
@@ -177,28 +185,28 @@
               <span class="text-[10px] font-bold uppercase tracking-wider">Total Sites</span>
               <i class="ph ph-broadcast text-base text-blue-400"></i>
             </div>
-            <h3 id="kpi-total" class="text-2xl font-black text-white">3</h3>
+            <h3 id="kpi-total" class="text-2xl font-black text-white">0</h3>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
             <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-[10px] font-bold uppercase tracking-wider">Normal (PLN OK)</span>
               <i class="ph ph-shield-check text-base text-emerald-400"></i>
             </div>
-            <h3 id="kpi-normal" class="text-2xl font-black text-emerald-400">1</h3>
+            <h3 id="kpi-normal" class="text-2xl font-black text-emerald-400">0</h3>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
             <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-[10px] font-bold uppercase tracking-wider">Warning (Backup)</span>
               <i class="ph ph-battery-warning text-base text-amber-400"></i>
             </div>
-            <h3 id="kpi-warning" class="text-2xl font-black text-amber-400">1</h3>
+            <h3 id="kpi-warning" class="text-2xl font-black text-amber-400">0</h3>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
             <div class="flex items-center justify-between text-slate-400 mb-1">
               <span class="text-[10px] font-bold uppercase tracking-wider">Critical Alert</span>
               <i class="ph ph-warning-octagon text-base text-red-400"></i>
             </div>
-            <h3 id="kpi-critical" class="text-2xl font-black text-red-400">1</h3>
+            <h3 id="kpi-critical" class="text-2xl font-black text-red-400">0</h3>
           </div>
         </div>
 
@@ -215,7 +223,7 @@
                 <span class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
                   <i class="ph ph-warning-circle text-base"></i> Priority Action List (Immediate Dispatch)
                 </span>
-                <span id="lastNmsTime" class="text-[10px] text-slate-400">NMS Sync: Standby</span>
+                <span id="lastNmsTime" class="text-[10px] text-slate-400">NMS Sync: Real-time Cloud Active</span>
               </div>
               <div id="priorityList" class="space-y-2 overflow-y-auto max-h-40 pr-1"></div>
             </div>
@@ -223,7 +231,7 @@
         </div>
       </section>
 
-      <!-- 2. MASTER DATA SITE VIEW -->
+      <!-- 2. DATA SITE -->
       <section id="view-datasite" class="hidden space-y-4">
         <div class="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
           <div class="p-3.5 border-b border-slate-800 flex flex-wrap justify-between items-center gap-3">
@@ -249,7 +257,7 @@
         </div>
       </section>
 
-      <!-- 3. NMS QUERY ALARM VIEW -->
+      <!-- 3. NMS QUERY -->
       <section id="view-nms" class="hidden space-y-4">
         <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-3">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -274,7 +282,7 @@
         </div>
       </section>
 
-      <!-- 4. MAINTENANCE VIEW -->
+      <!-- 4. MAINTENANCE -->
       <section id="view-maintenance" class="hidden space-y-4">
         <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4">
           <h3 class="text-sm font-bold text-white">2nd Level Support & Trouble Ticket CME/Power</h3>
@@ -283,7 +291,7 @@
         </div>
       </section>
 
-      <!-- 5. PREVENTIVE MAINTENANCE (PM) VIEW -->
+      <!-- 5. PM VIEW -->
       <section id="view-pm" class="hidden space-y-4">
         <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4">
           <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-800 pb-3">
@@ -304,15 +312,15 @@
           <div class="grid grid-cols-3 gap-3">
             <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
               <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Jadwal PM</span>
-              <div id="pm-stat-total" class="text-lg font-bold text-white mt-0.5">3</div>
+              <div id="pm-stat-total" class="text-lg font-bold text-white mt-0.5">0</div>
             </div>
             <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
               <span class="text-[10px] text-amber-400 uppercase font-semibold">Due / Pending</span>
-              <div id="pm-stat-pending" class="text-lg font-bold text-amber-400 mt-0.5">2</div>
+              <div id="pm-stat-pending" class="text-lg font-bold text-amber-400 mt-0.5">0</div>
             </div>
             <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
               <span class="text-[10px] text-emerald-400 uppercase font-semibold">Completed</span>
-              <div id="pm-stat-completed" class="text-lg font-bold text-emerald-400 mt-0.5">1</div>
+              <div id="pm-stat-completed" class="text-lg font-bold text-emerald-400 mt-0.5">0</div>
             </div>
           </div>
 
@@ -322,7 +330,7 @@
     </main>
   </div>
 
-  <!-- Modal Tambah/Edit Data Site -->
+  <!-- Modal Form -->
   <div id="siteModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -380,32 +388,80 @@
   </div>
 
   <script>
-    let sites = [
+    // ====================================================
+    // CONFIG FIREBASE REALTIME SME JABO (SUDAH TERPASANG)
+    // ====================================================
+    const firebaseConfig = {
+      databaseURL: "https://sme-jabo-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Default Seed Data
+    const defaultSites = [
       { id: "BGR001", name: "Pajajaran Hub", cluster: "Bogor Timur", pln: "33 kVA", genset: "Himoinsa 40 kVA", rect: "Huawei 200A", batt: "Lithium 200Ah", health: 98, status: "Normal", backupTime: "N/A", lastAlarm: "-" },
       { id: "BGR002", name: "Sukaraja Tower", cluster: "Bogor Utara", pln: "23 kVA", genset: "Himoinsa 35 kVA", rect: "Huawei 150A", batt: "VRLA 100Ah", health: 82, status: "Warning", backupTime: "3.2 Jam", lastAlarm: "Mains Fail" },
       { id: "JKT045", name: "Saharjo Apex", cluster: "Jakarta Selatan", pln: "41.5 kVA", genset: "Himoinsa 50 kVA", rect: "Huawei 300A", batt: "Lithium 300Ah", health: 65, status: "Critical", backupTime: "0.8 Jam", lastAlarm: "Low Battery" }
     ];
 
-    let pmData = [
+    const defaultPM = [
       { id: "BGR001", name: "Pajajaran Hub", date: "2026-08-28", pic: "FOP Team Bogor", status: "Due", items: "Genset Oil & Filter Check, Battery Capacity Test" },
       { id: "BGR002", name: "Sukaraja Tower", date: "2026-08-25", pic: "Teknisi CME MKU", status: "Due", items: "Rectifier Fan Clean, PLN Grounding Measurement" },
       { id: "JKT045", name: "Saharjo Apex", date: "2026-08-15", pic: "SME Support Jakarta", status: "Completed", items: "Deepsea Controller Calibration, Battery Cell Balancing" }
     ];
 
-    let nmsLogs = [];
+    let sites = JSON.parse(localStorage.getItem("sme_power_sites")) || defaultSites;
+    let pmData = JSON.parse(localStorage.getItem("sme_power_pm")) || defaultPM;
+    let nmsLogs = JSON.parse(localStorage.getItem("sme_power_nms")) || [];
     let chartInstance = null;
 
-    // --- VALIDASI LOGIN KETAT ---
+    // SINKRONISASI REALTIME LISTENER KE FIREBASE CLOUD
+    function initRealtimeSync() {
+      db.ref("sme_jabo_power").on("value", (snapshot) => {
+        const cloudData = snapshot.val();
+        if (cloudData) {
+          if (cloudData.sites) sites = cloudData.sites;
+          if (cloudData.pmData) pmData = cloudData.pmData;
+          if (cloudData.nmsLogs) nmsLogs = cloudData.nmsLogs;
+
+          localStorage.setItem("sme_power_sites", JSON.stringify(sites));
+          localStorage.setItem("sme_power_pm", JSON.stringify(pmData));
+          localStorage.setItem("sme_power_nms", JSON.stringify(nmsLogs));
+
+          renderDashboard();
+        } else {
+          // Inisialisasi awal ke cloud jika masih kosong
+          pushToCloud();
+        }
+      });
+    }
+
+    // PUSH DATA KE FIREBASE CLOUD JABO
+    function pushToCloud() {
+      localStorage.setItem("sme_power_sites", JSON.stringify(sites));
+      localStorage.setItem("sme_power_pm", JSON.stringify(pmData));
+      localStorage.setItem("sme_power_nms", JSON.stringify(nmsLogs));
+
+      db.ref("sme_jabo_power").set({
+        sites: sites,
+        pmData: pmData,
+        nmsLogs: nmsLogs,
+        lastUpdated: new Date().toISOString()
+      });
+    }
+
+    // --- AUTHENTICATION ---
     function performStrictLogin() {
       const user = document.getElementById('loginUser').value.trim();
       const pass = document.getElementById('loginPass').value.trim();
       const errBox = document.getElementById('loginError');
 
-      // Validasi kredensial wajib presisi
       if (user === 'sme.power' && pass === 'huawei2026') {
         errBox.classList.add('hidden');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').classList.remove('hidden');
+        initRealtimeSync();
         renderDashboard();
       } else {
         errBox.classList.remove('hidden');
@@ -420,7 +476,7 @@
       document.getElementById('loginScreen').style.display = 'flex';
     }
 
-    // --- SIDEBAR & NAVIGASI VIEW ---
+    // --- NAVIGATION & VIEWS ---
     function toggleSidebar() {
       const drawer = document.getElementById('sidebarDrawer');
       const backdrop = document.getElementById('sidebarBackdrop');
@@ -447,11 +503,12 @@
 
       toggleSidebar();
       if (viewId === 'view-datasite') renderTable(sites);
+      if (viewId === 'view-nms') renderNmsTable();
       if (viewId === 'view-maintenance') renderMaintenanceView();
       if (viewId === 'view-pm') renderPMView();
     }
 
-    // --- AUTO-MAPPER ENGINE (EXCEL) ---
+    // --- AUTO-MAPPER ENGINE ---
     function normalizeKey(str) { return str.toLowerCase().replace(/[^a-z0-9]/g, ''); }
     function findVal(row, candidates) {
       const keys = Object.keys(row);
@@ -489,8 +546,9 @@
               count++;
             }
           });
+          pushToCloud();
           renderDashboard();
-          alert(`Sukses! ${count} Master Site berhasil diproses.`);
+          alert(`Sukses! ${count} Master Site berhasil diimpor & tersinkronisasi ke seluruh perangkat.`);
         } catch (err) { alert("File Excel tidak valid."); }
       };
       reader.readAsArrayBuffer(file);
@@ -529,10 +587,11 @@
               }
             }
           });
-          document.getElementById('lastNmsTime').innerText = `NMS Sync: ${new Date().toLocaleTimeString()} WIB`;
+          pushToCloud();
+          document.getElementById('lastNmsTime').innerText = `NMS Sync: ${new Date().toLocaleTimeString()} WIB (Live)`;
           renderNmsTable();
           renderDashboard();
-          alert(`Berhasil! ${nmsLogs.length} Alarm NMS diproses.`);
+          alert(`Berhasil! ${nmsLogs.length} Alarm NMS diproses & disinkronkan ke seluruh tim.`);
         } catch (err) { alert("File NMS tidak valid."); }
       };
       reader.readAsArrayBuffer(file);
@@ -565,8 +624,9 @@
               count++;
             }
           });
+          pushToCloud();
           renderPMView();
-          alert(`Sukses! ${count} Data PM berhasil diimpor.`);
+          alert(`Sukses! ${count} Data PM berhasil disinkronisasi ke cloud.`);
         } catch (err) { alert("File PM tidak valid."); }
       };
       reader.readAsArrayBuffer(file);
@@ -580,10 +640,12 @@
         site.health = 98;
         site.status = 'Normal';
       }
+      pushToCloud();
       renderPMView();
       renderDashboard();
     }
 
+    // --- RENDERING VIEWS ---
     function renderDashboard() {
       const normalCount = sites.filter(s => s.status === 'Normal').length;
       const warningCount = sites.filter(s => s.status === 'Warning').length;
@@ -659,7 +721,11 @@
 
     function renderNmsTable() {
       const tbody = document.getElementById('nmsAlarmTable');
-      if (nmsLogs.length === 0) return;
+      if (!tbody) return;
+      if (nmsLogs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-500 italic">Belum ada file log alarm yang diunggah.</td></tr>';
+        return;
+      }
       tbody.innerHTML = nmsLogs.map(l => `
         <tr class="hover:bg-slate-800/40 transition">
           <td class="py-2.5 px-3 font-bold text-white">${l.id}</td>
@@ -787,12 +853,14 @@
       if (idx !== '') sites[idx] = { ...sites[idx], ...data };
       else sites.unshift(data);
       closeModal();
+      pushToCloud();
       renderDashboard();
     }
 
     function deleteSite(idx) {
       if (confirm(`Hapus site ${sites[idx].id}?`)) {
         sites.splice(idx, 1);
+        pushToCloud();
         renderDashboard();
       }
     }
