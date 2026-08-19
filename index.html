@@ -389,7 +389,7 @@
 
   <script>
     // ====================================================
-    // CONFIG FIREBASE REALTIME SME JABO (SUDAH TERPASANG)
+    // CONFIG FIREBASE REALTIME SME JABO
     // ====================================================
     const firebaseConfig = {
       databaseURL: "https://sme-jabo-default-rtdb.asia-southeast1.firebasedatabase.app"
@@ -431,7 +431,6 @@
 
           renderDashboard();
         } else {
-          // Inisialisasi awal ke cloud jika masih kosong
           pushToCloud();
         }
       });
@@ -451,7 +450,7 @@
       });
     }
 
-    // --- AUTHENTICATION ---
+    // --- AUTHENTICATION & REMEMBER SESSION ---
     function performStrictLogin() {
       const user = document.getElementById('loginUser').value.trim();
       const pass = document.getElementById('loginPass').value.trim();
@@ -459,6 +458,9 @@
 
       if (user === 'sme.power' && pass === 'huawei2026') {
         errBox.classList.add('hidden');
+        // Simpan status session login agar tidak hilang saat di-refresh
+        localStorage.setItem("sme_is_logged_in", "true");
+        
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').classList.remove('hidden');
         initRealtimeSync();
@@ -469,12 +471,26 @@
     }
 
     function performLogout() {
+      // Hapus session login
+      localStorage.removeItem("sme_is_logged_in");
+      
       document.getElementById('loginUser').value = '';
       document.getElementById('loginPass').value = '';
       document.getElementById('loginError').classList.add('hidden');
       document.getElementById('appScreen').classList.add('hidden');
       document.getElementById('loginScreen').style.display = 'flex';
     }
+
+    // AUTO LOGIN JIKA SUDAH PERNAH LOGIN SEBELUMNYA (SAAT REFRESH)
+    document.addEventListener("DOMContentLoaded", () => {
+      const isLoggedIn = localStorage.getItem("sme_is_logged_in");
+      if (isLoggedIn === "true") {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').classList.remove('hidden');
+        initRealtimeSync();
+        renderDashboard();
+      }
+    });
 
     // --- NAVIGATION & VIEWS ---
     function toggleSidebar() {
