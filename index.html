@@ -26,7 +26,7 @@
     .lightning-effect { animation: lightning-glow 2s ease-in-out infinite; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased relative">
 
   <!-- ================= MAIN APP SCREEN ================= -->
   <div id="appScreen" class="min-h-screen flex flex-col">
@@ -82,13 +82,13 @@
           </button>
         </div>
 
-        <!-- Tombol Export Laporan (Selalu Terlihat, Read-Only Action) -->
+        <!-- Tombol Export Laporan -->
         <button onclick="openExportModal()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700 transition">
           <i class="ph ph-export text-base"></i>
           <span class="hidden sm:inline">Export Laporan</span>
         </button>
 
-        <!-- Tombol Login Admin (Saat Mode Viewer) -->
+        <!-- Tombol Login Admin -->
         <button id="btnOpenLoginModal" onclick="openLoginModal()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700 transition">
           <i class="ph ph-lock-key text-base"></i>
           <span>Admin Login</span>
@@ -267,39 +267,37 @@
 
       <!-- 5. PM VIEW -->
       <section id="view-pm" class="hidden space-y-4">
-        <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4">
-          <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-800 pb-3">
-            <div>
-              <h3 class="text-sm font-bold text-white">Jadwal & Checklist Preventive Maintenance (PM)</h3>
-              <p class="text-xs text-slate-400">Monitoring siklus servis berkala Genset Himoinsa, Baterai, & Rectifier.</p>
-            </div>
-            
-            <div class="admin-only hidden items-center gap-2">
-              <input type="file" id="pmInput" class="hidden" accept=".xlsx, .xls, .csv" onchange="handlePMImport(event)">
-              <button onclick="document.getElementById('pmInput').click()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow flex items-center gap-1.5">
-                <i class="ph ph-file-arrow-up text-base"></i>
-                <span>Import Data PM (.xlsx)</span>
-              </button>
-            </div>
+        <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <h3 class="text-sm font-bold text-white">Jadwal & Checklist Preventive Maintenance (PM)</h3>
+            <p class="text-xs text-slate-400">Monitoring siklus servis berkala Genset Himoinsa, Baterai, & Rectifier.</p>
           </div>
-
-          <div class="grid grid-cols-3 gap-3">
-            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
-              <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Jadwal PM</span>
-              <div id="pm-stat-total" class="text-lg font-bold text-white mt-0.5">0</div>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
-              <span class="text-[10px] text-amber-400 uppercase font-semibold">Due / Pending</span>
-              <div id="pm-stat-pending" class="text-lg font-bold text-amber-400 mt-0.5">0</div>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
-              <span class="text-[10px] text-emerald-400 uppercase font-semibold">Completed</span>
-              <div id="pm-stat-completed" class="text-lg font-bold text-emerald-400 mt-0.5">0</div>
-            </div>
+          
+          <div class="admin-only hidden items-center gap-2">
+            <input type="file" id="pmInput" class="hidden" accept=".xlsx, .xls, .csv" onchange="handlePMImport(event)">
+            <button onclick="document.getElementById('pmInput').click()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow flex items-center gap-1.5">
+              <i class="ph ph-file-arrow-up text-base"></i>
+              <span>Import Data PM (.xlsx)</span>
+            </button>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="pmScheduleList"></div>
         </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+            <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Jadwal PM</span>
+            <div id="pm-stat-total" class="text-lg font-bold text-white mt-0.5">0</div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+            <span class="text-[10px] text-amber-400 uppercase font-semibold">Due / Pending</span>
+            <div id="pm-stat-pending" class="text-lg font-bold text-amber-400 mt-0.5">0</div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-center">
+            <span class="text-[10px] text-emerald-400 uppercase font-semibold">Completed</span>
+            <div id="pm-stat-completed" class="text-lg font-bold text-emerald-400 mt-0.5">0</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="pmScheduleList"></div>
       </section>
 
       <!-- 6. RIWAYAT STATUS (HISTORY) -->
@@ -355,8 +353,8 @@
   </div>
 
   <!-- ================= MODAL DETAIL SITE (POPUP KETERANGAN LENGKAP) ================= -->
-  <div id="siteDetailModal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
+  <div id="siteDetailModal" onclick="handleModalBackdropClick(event)" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] relative z-[10000]" onclick="event.stopPropagation()">
       <div class="flex justify-between items-start border-b border-slate-800 pb-4">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
@@ -463,6 +461,10 @@
             <span id="detailRbs" class="font-semibold text-white">Huawei BBU3910 / Blade</span>
           </div>
           <div class="flex justify-between items-center text-slate-300">
+            <span class="text-slate-400">Alarm Terakhir:</span>
+            <span id="detailLastAlarm" class="font-semibold text-amber-400">-</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-300">
             <span class="text-slate-400">Health Power Score:</span>
             <span id="detailHealth" class="font-bold text-emerald-400">98%</span>
           </div>
@@ -483,8 +485,8 @@
   </div>
 
   <!-- ================= POPUP MODAL LOGIN ADMIN ================= -->
-  <div id="adminLoginModal" style="display: none;" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm p-6 rounded-2xl shadow-2xl space-y-4">
+  <div id="adminLoginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm p-6 rounded-2xl shadow-2xl space-y-4 relative z-[10000]">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <i class="ph ph-shield-check text-amber-400 text-lg"></i>
@@ -511,8 +513,8 @@
   </div>
 
   <!-- ================= POPUP MODAL EXPORT LAPORAN ================= -->
-  <div id="exportModal" style="display: none;" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm p-6 rounded-2xl shadow-2xl space-y-4">
+  <div id="exportModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm p-6 rounded-2xl shadow-2xl space-y-4 relative z-[10000]">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <i class="ph ph-export text-emerald-400 text-lg"></i>
@@ -545,8 +547,8 @@
   </div>
 
   <!-- ================= MODAL TAMBAH/EDIT SITE (ADMIN ONLY) ================= -->
-  <div id="siteModal" style="display: none;" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh]">
+  <div id="siteModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh] relative z-[10000]">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
         <h3 id="modalTitle" class="text-sm font-bold text-white">Tambah Data Site</h3>
         <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="ph ph-x text-lg"></i></button>
@@ -745,7 +747,7 @@
 
     const HISTORY_MAX = 300;
     function logStatusChange(site, fromStatus, toStatus, source, detail) {
-      if (fromStatus === toStatus) return; // hanya catat kalau benar-benar berubah
+      if (fromStatus === toStatus) return;
       statusHistory.unshift({
         ts: new Date().toISOString(),
         id: site.id,
@@ -758,66 +760,103 @@
       if (statusHistory.length > HISTORY_MAX) statusHistory = statusHistory.slice(0, HISTORY_MAX);
     }
 
-    // --- POPUP MODAL HANDLER LANGSUNG (DISPLAY FLEX / NONE) ---
-    function showSiteDetail(siteId) {
-      const s = sites.find(item => String(item.id).toLowerCase() === String(siteId).toLowerCase());
-      if (!s) return;
+    // --- POPUP MODAL HANDLER (GLOBAL & RELIABLE) ---
+    function setSafeText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
+    }
 
-      document.getElementById('detailSiteId').innerText = s.id;
-      document.getElementById('detailSiteName').innerText = `${s.name} • ${s.cluster || '-'}`;
+    window.showSiteDetail = function(siteId) {
+      if (!siteId) return;
+      const s = sites.find(item => String(item.id).toLowerCase() === String(siteId).toLowerCase());
+      if (!s) {
+        alert(`Data untuk Site ID ${siteId} tidak ditemukan.`);
+        return;
+      }
+
+      setSafeText('detailSiteId', s.id || '-');
+      setSafeText('detailSiteName', `${s.name || '-'} • ${s.cluster || '-'}`);
       
       const stEl = document.getElementById('detailSiteStatus');
-      stEl.innerText = s.status;
-      stEl.className = `px-2 py-0.5 text-[10px] font-bold rounded-full border ${s.status === 'Critical' ? 'bg-red-500/20 text-red-400 border-red-500/30' : s.status === 'Warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'}`;
+      if (stEl) {
+        stEl.innerText = s.status || 'Normal';
+        stEl.className = `px-2 py-0.5 text-[10px] font-bold rounded-full border ${s.status === 'Critical' ? 'bg-red-500/20 text-red-400 border-red-500/30' : s.status === 'Warning' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'}`;
+      }
 
-      // NMS Status Badge
       const isNmsOk = (s.nmsStatus || 'Connected') === 'Connected';
       const nmsBadge = document.getElementById('detailNmsBadge');
-      nmsBadge.innerText = `NMS: ${s.nmsStatus || 'Connected'}`;
-      nmsBadge.className = `px-2 py-0.5 text-[10px] font-bold rounded-full border ${isNmsOk ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border-rose-500/30'}`;
+      if (nmsBadge) {
+        nmsBadge.innerText = `NMS: ${s.nmsStatus || 'Connected'}`;
+        nmsBadge.className = `px-2 py-0.5 text-[10px] font-bold rounded-full border ${isNmsOk ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border-rose-500/30'}`;
+      }
 
       const nmsStatusText = document.getElementById('detailNmsStatus');
-      nmsStatusText.innerText = isNmsOk ? 'Connected (Online Telemetry)' : (s.nmsStatus === 'Disconnected' ? 'Disconnected (Link Down)' : 'Unregistered (No Telemetry)');
-      nmsStatusText.className = `font-bold ${isNmsOk ? 'text-emerald-400' : 'text-rose-400'}`;
+      if (nmsStatusText) {
+        nmsStatusText.innerText = isNmsOk ? 'Connected (Online Telemetry)' : (s.nmsStatus === 'Disconnected' ? 'Disconnected (Link Down)' : 'Unregistered (No Telemetry)');
+        nmsStatusText.className = `font-bold ${isNmsOk ? 'text-emerald-400' : 'text-rose-400'}`;
+      }
 
-      document.getElementById('detailCoordinates').innerText = s.coords || "-6.5950, 106.8050";
-      document.getElementById('detailCluster').innerText = s.cluster || "-";
-      document.getElementById('detailPic').innerText = s.pic || "FOP Area Team";
-      document.getElementById('detailPlnId').innerText = s.plnId || "-";
-      document.getElementById('detailLastPm').innerText = s.lastPm ? `${s.lastPm} (Verified)` : "Belum Pernah PM";
+      setSafeText('detailCoordinates', s.coords || "-6.5950, 106.8050");
+      setSafeText('detailCluster', s.cluster || "-");
+      setSafeText('detailPic', s.pic || "FOP Area Team");
+      setSafeText('detailPlnId', s.plnId || "-");
+      setSafeText('detailLastPm', s.lastPm ? `${s.lastPm} (Verified)` : "Belum Pernah PM");
       
-      const cleanCoords = (s.coords || "-6.5950,106.8050").replace(/\s/g, '');
-      document.getElementById('detailMapLink').href = `https://www.google.com/maps/search/?api=1&query=${cleanCoords}`;
+      const mapLink = document.getElementById('detailMapLink');
+      if (mapLink) {
+        const cleanCoords = (s.coords || "-6.5950,106.8050").replace(/\s/g, '');
+        mapLink.href = `https://www.google.com/maps/search/?api=1&query=${cleanCoords}`;
+      }
 
-      document.getElementById('detailNav').innerText = s.nav || "99.95%";
-      document.getElementById('detailHealth').innerText = `${s.health}%`;
+      setSafeText('detailNav', s.nav || "99.95%");
+      setSafeText('detailHealth', `${s.health || 0}%`);
       
-      // Technology Badges
-      const techStr = s.tech || "2G, 4G";
-      const techArr = techStr.split(',').map(t => t.trim().toUpperCase());
-      document.getElementById('detailTechBadges').innerHTML = ['2G', '3G', '4G', '5G'].map(gen => {
-        const active = techArr.includes(gen);
-        return `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${active ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-slate-900 text-slate-600 border-slate-800'}">${gen}</span>`;
-      }).join('');
+      const techBox = document.getElementById('detailTechBadges');
+      if (techBox) {
+        const techStr = s.tech || "2G, 4G";
+        const techArr = techStr.split(',').map(t => t.trim().toUpperCase());
+        techBox.innerHTML = ['2G', '3G', '4G', '5G'].map(gen => {
+          const active = techArr.includes(gen);
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${active ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-slate-900 text-slate-600 border-slate-800'}">${gen}</span>`;
+        }).join('');
+      }
 
-      document.getElementById('detailBrandRect').innerText = s.rect || "Huawei TP48200";
-      document.getElementById('detailBattBank').innerText = s.batt || "2 Bank Lithium";
-      document.getElementById('detailPln').innerText = s.pln || "33 kVA";
-      document.getElementById('detailGenset').innerText = s.genset || "Himoinsa 40 kVA";
+      setSafeText('detailBrandRect', s.rect || "Huawei TP48200");
+      setSafeText('detailBattBank', s.batt || "2 Bank Lithium");
+      setSafeText('detailPln', s.pln || "33 kVA");
+      setSafeText('detailGenset', s.genset || "Himoinsa 40 kVA");
+      setSafeText('detailRouter', s.router || "Huawei ATN 950B");
+      setSafeText('detailRbs', s.rbs || "Huawei BBU3910 / Blade");
+      setSafeText('detailLastAlarm', s.lastAlarm || "-");
+      setSafeText('detailBackup', s.status === 'Normal' ? 'N/A (PLN Normal)' : (s.backupTime || 'Estimated 2-3 Jam'));
 
-      document.getElementById('detailRouter').innerText = s.router || "Huawei ATN 950B";
-      document.getElementById('detailRbs').innerText = s.rbs || "Huawei BBU3910 / Blade";
-      document.getElementById('detailLastAlarm').innerText = s.lastAlarm || "-";
-      document.getElementById('detailBackup').innerText = s.status === 'Normal' ? 'N/A (PLN OK)' : (s.backupTime || 'Estimated 2-3 Jam');
-
-      // Tampilkan Modal secara eksplisit
       const modal = document.getElementById('siteDetailModal');
-      modal.style.display = 'flex';
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    };
+
+    window.closeSiteDetail = function() {
+      const modal = document.getElementById('siteDetailModal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    };
+
+    function handleModalBackdropClick(e) {
+      if (e.target.id === 'siteDetailModal') closeSiteDetail();
     }
 
-    function closeSiteDetail() {
-      document.getElementById('siteDetailModal').style.display = 'none';
-    }
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSiteDetail();
+        closeLoginModal();
+        closeExportModal();
+        closeModal();
+      }
+    });
 
     // --- ROLE MANAGEMENT (ADMIN VS VIEWER) ---
     function updateRoleUI() {
@@ -853,27 +892,35 @@
     }
 
     function openLoginModal() {
-      document.getElementById('adminLoginModal').style.display = 'flex';
+      const modal = document.getElementById('adminLoginModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
       document.getElementById('adminError').classList.add('hidden');
     }
 
     function closeLoginModal() {
-      document.getElementById('adminLoginModal').style.display = 'none';
+      const modal = document.getElementById('adminLoginModal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
     }
 
-    // --- EXPORT LAPORAN (EXCEL & PDF) ---
+    // --- EXPORT LAPORAN ---
     function openExportModal() {
       document.getElementById('exportSiteCount').innerText = `${sites.length} site`;
       document.getElementById('exportTimestamp').innerText = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
-      document.getElementById('exportModal').style.display = 'flex';
+      const modal = document.getElementById('exportModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
     }
 
     function closeExportModal() {
-      document.getElementById('exportModal').style.display = 'none';
+      const modal = document.getElementById('exportModal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
     }
 
     function exportExcelReport() {
-      if (typeof XLSX === 'undefined') { alert('Library Excel gagal dimuat. Cek koneksi internet.'); return; }
+      if (typeof XLSX === 'undefined') { alert('Library Excel gagal dimuat.'); return; }
       try {
         const now = new Date();
         const normalCount = sites.filter(s => s.status === 'Normal').length;
@@ -882,7 +929,6 @@
 
         const wb = XLSX.utils.book_new();
 
-        // --- Sheet 1: Ringkasan ---
         const summaryData = [
           ['LAPORAN POWER MANAGEMENT SYSTEM'],
           ['SME Operations - Reliable Energy'],
@@ -905,7 +951,6 @@
         wsSummary['!cols'] = [{ wch: 28 }, { wch: 20 }];
         XLSX.utils.book_append_sheet(wb, wsSummary, 'Ringkasan');
 
-        // --- Sheet 2: Data Site (Master) ---
         const siteRows = sites.map(s => ({
           'Site ID': s.id,
           'Nama Site': s.name,
@@ -931,7 +976,6 @@
         wsSites['!cols'] = Object.keys(siteRows[0] || {}).map(() => ({ wch: 18 }));
         XLSX.utils.book_append_sheet(wb, wsSites, 'Data Site');
 
-        // --- Sheet 3: NMS Alarm ---
         const nmsRows = nmsLogs.length
           ? nmsLogs.map(l => ({ 'Site ID': l.id, 'Alarm Terdeteksi': l.alarm, 'Severity': l.severity, 'Kondisi': l.cleared ? 'Cleared' : 'Active', 'Site Ditemukan di Master': l.matched ? 'Ya' : 'Tidak' }))
           : [{ 'Site ID': '-', 'Alarm Terdeteksi': 'Belum ada data alarm diimpor', 'Severity': '-', 'Kondisi': '-', 'Site Ditemukan di Master': '-' }];
@@ -939,7 +983,6 @@
         wsNms['!cols'] = [{ wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 10 }, { wch: 18 }];
         XLSX.utils.book_append_sheet(wb, wsNms, 'NMS Alarm');
 
-        // --- Sheet 4: Jadwal PM ---
         const pmRows = pmData.length
           ? pmData.map(p => ({ 'Site ID': p.id, 'Nama Site': p.name, 'Target Tanggal': p.date, 'PIC': p.pic, 'Status': p.status, 'Scope/Item Servis': p.items }))
           : [{ 'Site ID': '-', 'Nama Site': 'Belum ada data PM', 'Target Tanggal': '-', 'PIC': '-', 'Status': '-', 'Scope/Item Servis': '-' }];
@@ -947,7 +990,6 @@
         wsPm['!cols'] = [{ wch: 12 }, { wch: 20 }, { wch: 14 }, { wch: 18 }, { wch: 12 }, { wch: 40 }];
         XLSX.utils.book_append_sheet(wb, wsPm, 'Jadwal PM');
 
-        // --- Sheet 5: Riwayat Perubahan Status ---
         const histRows = statusHistory.length
           ? statusHistory.map(h => ({
               'Waktu': new Date(h.ts).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
@@ -968,12 +1010,12 @@
         closeExportModal();
       } catch (err) {
         console.error(err);
-        alert('Gagal membuat file Excel. Coba lagi.');
+        alert('Gagal membuat file Excel.');
       }
     }
 
     function exportPDFReport() {
-      if (typeof window.jspdf === 'undefined') { alert('Library PDF gagal dimuat. Cek koneksi internet.'); return; }
+      if (typeof window.jspdf === 'undefined') { alert('Library PDF gagal dimuat.'); return; }
       try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -983,7 +1025,6 @@
         const warningCount = sites.filter(s => s.status === 'Warning').length;
         const criticalCount = sites.filter(s => s.status === 'Critical').length;
 
-        // Header
         doc.setFillColor(15, 23, 42);
         doc.rect(0, 0, pageWidth, 24, 'F');
         doc.setTextColor(251, 191, 36);
@@ -1003,7 +1044,6 @@
         doc.text('Ringkasan Status', 14, y);
         y += 6;
 
-        // KPI boxes
         const kpis = [
           { label: 'Total Site', value: sites.length, color: [51, 65, 85] },
           { label: 'Normal', value: normalCount, color: [16, 185, 129] },
@@ -1027,7 +1067,6 @@
         });
         y += 22;
 
-        // Priority Action List (Critical + Warning)
         const priority = sites.filter(s => s.status === 'Critical' || s.status === 'Warning');
         doc.setTextColor(30, 41, 59);
         doc.setFont('helvetica', 'bold');
@@ -1043,17 +1082,9 @@
           headStyles: { fillColor: [15, 23, 42], textColor: [251, 191, 36], fontSize: 8 },
           bodyStyles: { fontSize: 7.5, textColor: [30, 41, 59] },
           alternateRowStyles: { fillColor: [248, 250, 252] },
-          didParseCell: (data) => {
-            if (data.section === 'body' && data.column.index === 2) {
-              const val = data.cell.raw;
-              if (val === 'Critical') data.cell.styles.textColor = [239, 68, 68];
-              if (val === 'Warning') data.cell.styles.textColor = [217, 119, 6];
-            }
-          },
           margin: { left: 14, right: 14 }
         });
 
-        // Full Site List
         let y2 = doc.lastAutoTable.finalY + 10;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
@@ -1069,7 +1100,6 @@
           margin: { left: 14, right: 14 }
         });
 
-        // PM Pending (new page if needed)
         const pmPending = pmData.filter(p => p.status.toLowerCase() !== 'completed');
         let y3 = doc.lastAutoTable.finalY + 10;
         if (y3 > 250) { doc.addPage(); y3 = 20; }
@@ -1089,34 +1119,6 @@
           margin: { left: 14, right: 14 }
         });
 
-        // Riwayat Perubahan Status (30 hari terakhir, new page if needed)
-        const histCutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-        const histRecent = statusHistory.filter(h => new Date(h.ts).getTime() >= histCutoff).slice(0, 20);
-        let y4 = doc.lastAutoTable.finalY + 10;
-        if (y4 > 250) { doc.addPage(); y4 = 20; }
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.text('Riwayat Perubahan Status (30 Hari Terakhir)', 14, y4);
-        doc.autoTable({
-          startY: y4 + 3,
-          head: [['Waktu', 'Site ID', 'Dari → Ke', 'Sumber', 'Detail']],
-          body: histRecent.length
-            ? histRecent.map(h => [
-                new Date(h.ts).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }),
-                h.id,
-                `${h.from} -> ${h.to}`,
-                h.source,
-                h.detail
-              ])
-            : [['-', '-', 'Tidak ada perubahan status dalam 30 hari terakhir', '-', '-']],
-          theme: 'grid',
-          headStyles: { fillColor: [15, 23, 42], textColor: [251, 191, 36], fontSize: 8 },
-          bodyStyles: { fontSize: 7, textColor: [30, 41, 59] },
-          alternateRowStyles: { fillColor: [248, 250, 252] },
-          margin: { left: 14, right: 14 }
-        });
-
-        // Footer page numbers
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
           doc.setPage(i);
@@ -1130,7 +1132,7 @@
         closeExportModal();
       } catch (err) {
         console.error(err);
-        alert('Gagal membuat PDF. Coba lagi.');
+        alert('Gagal membuat PDF.');
       }
     }
 
@@ -1234,8 +1236,6 @@
       return null;
     }
 
-    // --- ENGINE KLASIFIKASI ALARM NMS (ANTI SALAH KLASIFIKASI) ---
-    // Rank: 3 = Critical, 2 = Warning, 1 = Informasi (tidak ubah status), 0 = tidak diketahui
     const ALARM_RULES = [
       {
         rank: 3,
@@ -1350,7 +1350,7 @@
           });
           pushToCloud();
           renderDashboard();
-          alert(`Sukses! ${count} Master Site berhasil diimpor dengan data PLN ID, Last PM, & NMS.`);
+          alert(`Sukses! ${count} Master Site berhasil diimpor.`);
         } catch (err) { alert("File Excel tidak valid."); }
       };
       reader.readAsArrayBuffer(file);
@@ -1369,17 +1369,16 @@
 
           if (json.length === 0) { alert('File kosong atau format tidak terbaca.'); return; }
 
-          // Validasi kolom wajib sebelum proses, biar gak salah parsing diam-diam
           const sample = json[0];
           const hasIdCol = findVal(sample, ['siteid', 'id', 'site_id', 'ne_name']) !== null;
           const hasAlarmCol = findVal(sample, ['alarmname', 'alarm', 'alarm_name']) !== null;
           if (!hasIdCol || !hasAlarmCol) {
-            alert('Kolom wajib tidak terdeteksi di file ini.\n\nDibutuhkan minimal kolom untuk Site ID dan Alarm Name.\nCek kembali header kolom pada file Excel/CSV yang diunggah.');
+            alert('Kolom wajib tidak terdeteksi di file ini.');
             return;
           }
 
           const newLogs = [];
-          const siteAgg = new Map(); // siteIdLower -> { bestRank, bestAlarm, activeCount }
+          const siteAgg = new Map();
           let clearedCount = 0, skippedCount = 0;
           const unmatchedSiteIds = new Set();
 
@@ -1410,7 +1409,6 @@
             }
           });
 
-          // Terapkan status TERBURUK per site (bukan baris terakhir yang diproses)
           let updatedCount = 0;
           siteAgg.forEach((agg, idKey) => {
             const site = sites.find(x => x.id.toLowerCase() === idKey);
@@ -1436,14 +1434,9 @@
           renderNmsTable();
           renderDashboard();
 
-          let msg = `Import selesai.\n\n✅ ${updatedCount} site diupdate status power-nya.\n📋 ${newLogs.length} baris alarm diproses (${clearedCount} sudah cleared, diabaikan dari status).`;
-          if (skippedCount > 0) msg += `\n⚠️ ${skippedCount} baris dilewati (Site ID / nama alarm kosong).`;
-          if (unmatchedSiteIds.size > 0) {
-            const preview = [...unmatchedSiteIds].slice(0, 5).join(', ');
-            msg += `\n❗ ${unmatchedSiteIds.size} Site ID tidak ditemukan di Master Data: ${preview}${unmatchedSiteIds.size > 5 ? ', ...' : ''}\n   (tetap tercatat di tabel NMS Alarm, tapi status site tidak berubah)`;
-          }
+          let msg = `Import selesai.\n\n✅ ${updatedCount} site diupdate status power-nya.\n📋 ${newLogs.length} baris alarm diproses.`;
           alert(msg);
-        } catch (err) { console.error(err); alert("File NMS tidak valid atau format tidak sesuai."); }
+        } catch (err) { console.error(err); alert("File NMS tidak valid."); }
       };
       reader.readAsArrayBuffer(file);
       e.target.value = '';
@@ -1541,7 +1534,7 @@
         return;
       }
       pList.innerHTML = criticals.map(s => `
-        <div onclick="showSiteDetail('${s.id}')" class="cursor-pointer hover:scale-[1.01] transition flex items-center justify-between p-2 rounded-lg ${s.status === 'Critical' ? 'bg-red-500/10 border border-red-500/30' : 'bg-amber-500/10 border border-amber-500/30'}">
+        <div onclick="window.showSiteDetail('${s.id}')" class="cursor-pointer hover:scale-[1.01] transition flex items-center justify-between p-2 rounded-lg ${s.status === 'Critical' ? 'bg-red-500/10 border border-red-500/30' : 'bg-amber-500/10 border border-amber-500/30'}">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full ${s.status === 'Critical' ? 'bg-red-500 animate-pulse-critical' : 'bg-amber-400'}"></span>
             <div>
@@ -1562,12 +1555,12 @@
         return `
           <tr class="hover:bg-slate-800/40 transition">
             <td class="py-3 px-3.5 font-medium text-white">
-              <button type="button" onclick="showSiteDetail('${s.id}')" class="text-left group flex flex-col focus:outline-none">
+              <div onclick="window.showSiteDetail('${s.id}')" class="cursor-pointer group flex flex-col focus:outline-none w-fit">
                 <span class="font-bold text-amber-400 group-hover:underline flex items-center gap-1.5 cursor-pointer">
                   ${s.id} <i class="ph ph-arrow-square-out text-sm text-slate-400 group-hover:text-amber-300"></i>
                 </span>
                 <span class="text-slate-300 text-[11px]">${s.name} (${s.cluster || '-'})</span>
-              </button>
+              </div>
             </td>
             <td class="py-3 px-3.5 text-slate-300 font-mono">
               ${s.pln}
@@ -1632,7 +1625,7 @@
       }
       list.innerHTML = alerts.map(s => `
         <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
-          <div onclick="showSiteDetail('${s.id}')" class="cursor-pointer">
+          <div onclick="window.showSiteDetail('${s.id}')" class="cursor-pointer">
             <div class="font-bold text-white text-xs hover:text-amber-400 flex items-center gap-1">${s.id} - ${s.name} <i class="ph ph-arrow-square-out"></i></div>
             <div class="text-[11px] text-slate-400">Issue: ${s.lastAlarm} | Genset: ${s.genset} | PLN ID: ${s.plnId || '-'}</div>
           </div>
@@ -1665,7 +1658,7 @@
         return `
           <div class="p-4 bg-slate-950 border ${isDone ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-slate-800'} rounded-xl space-y-3">
             <div class="flex justify-between items-start">
-              <div onclick="showSiteDetail('${p.id}')" class="cursor-pointer group">
+              <div onclick="window.showSiteDetail('${p.id}')" class="cursor-pointer group">
                 <span class="font-bold text-sm text-white group-hover:text-amber-400 flex items-center gap-1">${p.id} <i class="ph ph-arrow-square-out text-xs"></i></span>
                 <span class="text-xs text-slate-300 block font-medium">${p.name}</span>
                 <span class="text-[11px] text-slate-500">PIC: ${p.pic} • Target: ${p.date}</span>
@@ -1705,7 +1698,6 @@
       ));
     }
 
-    // --- RIWAYAT PERUBAHAN STATUS ---
     function statusBadgeSmall(status) {
       const map = {
         Critical: 'bg-red-500/20 text-red-400 border-red-500/30',
@@ -1721,7 +1713,6 @@
       if (!tbody) return;
       const data = filtered || statusHistory;
 
-      // Statistik 30 hari terakhir (selalu dari data penuh, bukan hasil filter)
       const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
       const recent = statusHistory.filter(h => new Date(h.ts).getTime() >= cutoff);
       document.getElementById('hist-stat-critical').innerText = recent.filter(h => h.to === 'Critical').length;
@@ -1766,7 +1757,9 @@
 
     function openModal(editIdx = null) {
       if (!isAdmin) return;
-      document.getElementById('siteModal').style.display = 'flex';
+      const modal = document.getElementById('siteModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
       if (editIdx !== null) {
         document.getElementById('modalTitle').innerText = 'Edit Data Site';
         document.getElementById('editIndex').value = editIdx;
@@ -1796,7 +1789,11 @@
       }
     }
 
-    function closeModal() { document.getElementById('siteModal').style.display = 'none'; }
+    function closeModal() {
+      const modal = document.getElementById('siteModal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+    }
 
     function saveSite(e) {
       e.preventDefault();
