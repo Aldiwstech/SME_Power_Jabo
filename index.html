@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SME Telecom Master Data Portal - Realtime System</title>
+  <title>SME Telecom Power Engineering & Master Data Portal</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -22,20 +22,24 @@
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     .badge-vip { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-    .clickable-issue:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(225, 29, 72, 0.15); }
+    .card-shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05); }
+    .card-shadow-hover:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07); }
+    .status-banner-danger { background: linear-gradient(135deg, #e11d48, #be123c); }
+    .status-banner-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .status-banner-safe { background: linear-gradient(135deg, #10b981, #059669); }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-100/70 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
-  <!-- ================= 1. JENDELA AWAL / LOGIN SCREEN (CLEAN LIGHT) ================= -->
-  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-100/90 backdrop-blur-sm px-4">
-    <div class="relative w-full max-w-md bg-white border border-slate-200 p-8 rounded-2xl shadow-xl z-10">
+  <!-- ================= 1. JENDELA AWAL / LOGIN SCREEN ================= -->
+  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 p-8 rounded-3xl shadow-2xl z-10">
       <div class="text-center mb-6">
-        <div class="w-14 h-14 bg-blue-50 border border-blue-200 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
-          <i data-lucide="radio-tower" class="w-7 h-7 text-blue-600"></i>
+        <div class="w-14 h-14 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+          <i data-lucide="zap" class="w-7 h-7 text-rose-600"></i>
         </div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">SME Master Portal</h1>
-        <p class="text-xs text-slate-500 mt-1">Realtime Monitoring 114 Parameter & Dashboard Kesehatan NOP</p>
+        <h1 class="text-2xl font-black tracking-tight text-slate-900">SME Power & Master Portal</h1>
+        <p class="text-xs text-slate-500 mt-1">Simulasi Kontrak PLN, Rekayasa Daya & 114 Parameter Teknis</p>
       </div>
 
       <div class="mb-4 flex justify-end">
@@ -49,7 +53,7 @@
           <label class="block text-xs font-semibold text-slate-700 mb-1">Email Akun</label>
           <div class="relative">
             <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-            <input type="email" id="login-email" placeholder="admin@telecom.id" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition" />
+            <input type="email" id="login-email" placeholder="admin@telecom.id" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-rose-500 focus:bg-white transition" />
           </div>
         </div>
 
@@ -57,22 +61,22 @@
           <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
           <div class="relative">
             <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-            <input type="password" id="login-password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition" />
+            <input type="password" id="login-password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-rose-500 focus:bg-white transition" />
           </div>
         </div>
 
         <div id="auth-error-msg" class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200"></div>
 
         <div class="pt-2 space-y-2">
-          <button type="button" onclick="bypassDemoLogin()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition shadow-md shadow-blue-500/20 flex items-center justify-center gap-2">
-            <span>Buka Dashboard SME</span>
+          <button type="button" onclick="bypassDemoLogin()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-xs transition shadow-md shadow-rose-500/20 flex items-center justify-center gap-2">
+            <span>Buka Dashboard & Simulator</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </form>
       
       <div class="mt-6 pt-4 border-t border-slate-100 text-center">
-        <p class="text-[11px] text-slate-400">Total 4.307 Site & 114 Parameter • Realtime Interactive Drill-Down</p>
+        <p class="text-[11px] text-slate-400">Total 4.307 Site & 114 Parameter • Realtime Interactive Engineering</p>
       </div>
     </div>
   </div>
@@ -82,62 +86,67 @@
     <div class="w-full max-w-lg bg-white border border-slate-200 p-6 rounded-2xl shadow-2xl">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-          <i data-lucide="database" class="w-4 h-4 text-blue-600"></i> Firebase Config
+          <i data-lucide="database" class="w-4 h-4 text-rose-600"></i> Firebase Realtime Config
         </h3>
         <button onclick="toggleConfigModal(false)" class="text-slate-400 hover:text-slate-700">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <textarea id="firebase-config-json" rows="8" class="w-full p-3 font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-blue-600"></textarea>
+      <textarea id="firebase-config-json" rows="8" class="w-full p-3 font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-rose-500"></textarea>
       <div class="mt-4 flex justify-end gap-2">
         <button onclick="toggleConfigModal(false)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-medium rounded-lg text-slate-700">Batal</button>
-        <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-semibold rounded-lg text-white">Simpan</button>
+        <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-xs font-semibold rounded-lg text-white">Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= 2. MAIN APPLICATION (WHITE THEME) ================= -->
-  <div id="main-app" class="hidden min-h-screen flex flex-col bg-slate-50">
+  <!-- ================= 2. MAIN APPLICATION ================= -->
+  <div id="main-app" class="hidden min-h-screen flex flex-col bg-slate-100/70">
     <!-- TOP HEADER -->
-    <header class="h-16 border-b border-slate-200 bg-white sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between shadow-sm">
+    <header class="h-16 border-b border-slate-200 bg-white sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between shadow-xs">
       <div class="flex items-center gap-3">
         <!-- TRAY BURGER BUTTON (KIRI ATAS) -->
-        <button id="toggle-tray-btn" onclick="toggleSidebarTray()" title="Buka Menu Tray" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 border border-slate-300 transition">
+        <button id="toggle-tray-btn" onclick="toggleSidebarTray()" title="Buka Menu Tray Navigasi" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-xl text-slate-700 border border-slate-200 transition">
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-extrabold text-base tracking-tight text-slate-900">
+            <span class="font-black text-base tracking-tight text-slate-900">
               SME MASTER DATA
             </span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Realtime</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">Power Engineering</span>
           </div>
-          <p id="active-modul-title" class="text-[11px] text-slate-500 font-medium">Dashboard Ringkasan Eksekutif & NOP</p>
+          <p id="active-modul-title" class="text-[11px] text-slate-500 font-medium">Profil & Kontrak Site R12 • Simulasi Daya PLN</p>
         </div>
       </div>
 
       <!-- TOP ACTIONS -->
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2">
         <div id="firebase-status-badge" class="hidden sm:flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl font-medium">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="firebase-status-text">Connected</span>
+          <span id="firebase-status-text">Realtime Connected</span>
         </div>
 
-        <button onclick="showExecutiveDashboard()" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-semibold rounded-xl text-xs flex items-center gap-1.5 transition">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+        <button onclick="switchViewMode('simulator')" id="btn-view-sim" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="sliders" class="w-3.5 h-3.5 text-rose-600"></i>
+          <span>Simulasi Daya PLN</span>
+        </button>
+
+        <button onclick="switchViewMode('dashboard')" id="btn-view-dash" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-blue-600"></i>
           <span>Dashboard NOP</span>
         </button>
 
-        <label class="cursor-pointer px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5 transition shadow-sm">
+        <button onclick="switchViewMode('modules')" id="btn-view-mods" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="table" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Master 114 Kolom</span>
+        </button>
+
+        <label class="cursor-pointer px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5 transition shadow-xs">
           <i data-lucide="upload" class="w-3.5 h-3.5 text-blue-600"></i>
           <span class="hidden md:inline">Sync Excel</span>
           <input type="file" id="excel-upload-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)" />
         </label>
-
-        <button onclick="exportFilteredData()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5 transition shadow-sm">
-          <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span class="hidden md:inline">Export JSON</span>
-        </button>
 
         <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl border border-transparent transition">
           <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -152,7 +161,7 @@
       <aside id="sidebar-tray" class="fixed top-16 bottom-0 left-0 w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-40 shadow-xl -translate-x-full select-none">
         <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-blue-600"></i> Menu Navigasi
+            <i data-lucide="layers" class="w-4 h-4 text-rose-600"></i> Menu Navigasi
           </span>
           <button onclick="toggleSidebarTray()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-500">
             <i data-lucide="x" class="w-4 h-4"></i>
@@ -160,8 +169,17 @@
         </div>
 
         <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
-          <!-- Executive Dashboard Button -->
-          <button onclick="showExecutiveDashboard(); toggleSidebarTray();" id="modul-btn-dash" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition bg-blue-50 text-blue-700 border border-blue-200">
+          <!-- Power Simulator Tab -->
+          <button onclick="switchViewMode('simulator'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition bg-rose-50 text-rose-700 border border-rose-200">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="sliders" class="w-4 h-4 shrink-0 text-rose-600"></i>
+              <span class="truncate">Profil & Simulasi Kontrak PLN</span>
+            </div>
+            <span class="text-[10px] bg-rose-200 text-rose-800 px-1.5 py-0.5 rounded font-bold">UTAMA</span>
+          </button>
+
+          <!-- Executive Dashboard Tab -->
+          <button onclick="switchViewMode('dashboard'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
             <div class="flex items-center gap-2.5">
               <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 text-blue-600"></i>
               <span class="truncate">Ringkasan & Kondisi NOP</span>
@@ -169,288 +187,439 @@
             <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">KONDISI</span>
           </button>
 
-          <div class="pt-2 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             7 Modul Data Lengkap (114 Kolom)
           </div>
 
-          <!-- Modul 1 -->
-          <button onclick="setModule(0); toggleSidebarTray();" id="modul-btn-0" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-blue-600"></i>
-              <span class="truncate">1. Site Identity & Loc</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">16</span>
+          <!-- Modul 1 - 7 -->
+          <button onclick="setModule(0); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-blue-600"></i><span>1. Site Identity & Loc</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">16</span>
           </button>
-
-          <!-- Modul 2 -->
-          <button onclick="setModule(1); toggleSidebarTray();" id="modul-btn-1" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="users" class="w-4 h-4 shrink-0 text-indigo-600"></i>
-              <span class="truncate">2. PIC & Provider (TP)</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">4</span>
+          <button onclick="setModule(1); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="users" class="w-4 h-4 shrink-0 text-indigo-600"></i><span>2. PIC & Provider (TP)</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">4</span>
           </button>
-
-          <!-- Modul 3 -->
-          <button onclick="setModule(2); toggleSidebarTray();" id="modul-btn-2" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="radio" class="w-4 h-4 shrink-0 text-cyan-600"></i>
-              <span class="truncate">3. Dapot RAN & Radio</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">14</span>
+          <button onclick="setModule(2); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="radio" class="w-4 h-4 shrink-0 text-cyan-600"></i><span>3. Dapot RAN & Radio</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">14</span>
           </button>
-
-          <!-- Modul 4 -->
-          <button onclick="setModule(3); toggleSidebarTray();" id="modul-btn-4" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="network" class="w-4 h-4 shrink-0 text-emerald-600"></i>
-              <span class="truncate">4. Transport & Metro</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">13</span>
+          <button onclick="setModule(3); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="network" class="w-4 h-4 shrink-0 text-emerald-600"></i><span>4. Transport & Metro</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">13</span>
           </button>
-
-          <!-- Modul 5 -->
-          <button onclick="setModule(4); toggleSidebarTray();" id="modul-btn-5" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="zap" class="w-4 h-4 shrink-0 text-amber-600"></i>
-              <span class="truncate">5. Power PLN & Electrical</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">17</span>
+          <button onclick="setModule(4); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="zap" class="w-4 h-4 shrink-0 text-amber-600"></i><span>5. Power PLN & Electrical</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">17</span>
           </button>
-
-          <!-- Modul 6 -->
-          <button onclick="setModule(5); toggleSidebarTray();" id="modul-btn-6" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="battery-charging" class="w-4 h-4 shrink-0 text-orange-600"></i>
-              <span class="truncate">6. Rectifier & Battery</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">22</span>
+          <button onclick="setModule(5); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="battery-charging" class="w-4 h-4 shrink-0 text-orange-600"></i><span>6. Rectifier & Battery</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">22</span>
           </button>
-
-          <!-- Modul 7 -->
-          <button onclick="setModule(6); toggleSidebarTray();" id="modul-btn-7" class="modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="fan" class="w-4 h-4 shrink-0 text-sky-600"></i>
-              <span class="truncate">7. Cooling & Genset</span>
-            </div>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">28</span>
+          <button onclick="setModule(6); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition">
+            <div class="flex items-center gap-2.5"><i data-lucide="fan" class="w-4 h-4 shrink-0 text-sky-600"></i><span>7. Cooling & Genset</span></div>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">28</span>
           </button>
         </nav>
 
         <div class="p-3 m-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
-          <div class="flex justify-between mb-1">
-            <span>Total Site:</span>
-            <span id="stat-total" class="font-bold text-slate-900">4,307</span>
-          </div>
-          <div class="flex justify-between mb-1">
-            <span>VIP Sites:</span>
-            <span id="stat-vip" class="font-bold text-amber-600">0</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Filtered:</span>
-            <span id="stat-filtered" class="font-bold text-blue-600">0</span>
-          </div>
+          <div class="flex justify-between mb-1"><span>Total Database:</span><span id="stat-total" class="font-bold text-slate-900">4,307</span></div>
+          <div class="flex justify-between"><span>Realtime Loaded:</span><span id="stat-loaded" class="font-bold text-rose-600">4,307 Site</span></div>
         </div>
       </aside>
 
       <!-- ================= 4. MAIN WORKSPACE ================= -->
-      <main class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden">
+      <main class="flex-1 flex flex-col min-w-0 bg-slate-100/60 overflow-hidden">
         
-        <!-- ================= A. EXECUTIVE SUMMARY DASHBOARD (DEFAULT VIEW) ================= -->
-        <div id="executive-dashboard-view" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-          
-          <!-- Summary Metric Cards (Top) - All Clickable for Quick Drill-down -->
+        <!-- ================= VIEW 1: POWER ENGINEERING & MULTI-SKEMA SIMULATOR (SESUAI GAMBAR) ================= -->
+        <div id="view-simulator" class="flex-1 overflow-y-auto p-4 sm:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-[1600px] mx-auto items-start">
+            
+            <!-- ================= KOLOM KIRI (PROFIL & ACPDB TERUKUR) ================= -->
+            <div class="lg:col-span-4 space-y-5">
+              
+              <!-- Card: Profil & Kontrak Site R12 -->
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-black text-xs border border-rose-200">A</span>
+                    Profil & Kontrak Site R12
+                  </h3>
+                  <span id="sim-badge-site-count" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    ● 4.307 Sites
+                  </span>
+                </div>
+
+                <div class="space-y-3.5">
+                  <!-- Search Auto-fill -->
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pilih / Cari Site (Auto-Fill):</label>
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+                      <input type="text" id="sim-search-input" oninput="handleSimSiteSearch(this.value)" placeholder="Ketik Site ID / Nama (cth: BKS454, BKS002...)" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500 focus:bg-white transition font-medium" />
+                      <!-- Dropdown Autocomplete Results -->
+                      <div id="sim-search-results" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto z-50 divide-y divide-slate-100 text-xs">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Site ID & NOP -->
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Site ID</label>
+                      <input type="text" id="sim-site-id" value="BKS002" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-rose-600" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NOP / Wilayah</label>
+                      <input type="text" id="sim-nop" value="NOP KARAWANG" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700" />
+                    </div>
+                  </div>
+
+                  <!-- Site Name -->
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Site Name</label>
+                    <input type="text" id="sim-site-name" value="MM2100" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800" />
+                  </div>
+
+                  <!-- Kapasitas Kontrak & Rating MCB -->
+                  <div class="grid grid-cols-12 gap-3">
+                    <div class="col-span-8">
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kapasitas Kontrak</label>
+                      <select id="sim-contract-select" onchange="handleContractChange()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-rose-500">
+                        <option value="7700|1|35">7.7 kVA (1-Ph / 35A)</option>
+                        <option value="11000|3|16">11.0 kVA (3-Ph / 3x16A)</option>
+                        <option value="13200|3|20">13.2 kVA (3-Ph / 3x20A)</option>
+                        <option value="16500|3|25">16.5 kVA (3-Ph / 3x25A)</option>
+                        <option value="23000|3|35">23.0 kVA (3-Ph / 3x35A)</option>
+                        <option value="33000|3|50" selected>33.0 kVA (3-Ph / 3x50A)</option>
+                        <option value="41500|3|63">41.5 kVA (3-Ph / 3x63A)</option>
+                        <option value="53000|3|80">53.0 kVA (3-Ph / 3x80A)</option>
+                      </select>
+                    </div>
+                    <div class="col-span-4">
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rating MCB</label>
+                      <div class="relative">
+                        <input type="number" id="sim-mcb-rating" value="50" oninput="recalculateEngineering()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-rose-500" />
+                        <span class="text-[10px] text-slate-400 absolute right-2.5 top-2.5 font-medium">Ampere</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: ACPDB Terukur (Sensor NetEco) -->
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                    ACPDB Terukur
+                  </h3>
+                  <span class="text-[11px] font-medium text-slate-400">Sensor NetEco Telemetry</span>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="grid grid-cols-12 gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">
+                    <span class="col-span-4">Fasa</span>
+                    <span class="col-span-4 text-center">Tegangan (V)</span>
+                    <span class="col-span-4 text-center">Arus Beban (A)</span>
+                  </div>
+
+                  <!-- Phase R -->
+                  <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                      <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                      Phase R (L1)
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.1" id="sim-volt-r" value="237.1" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.01" id="sim-amp-r" value="3.43" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
+                    </div>
+                  </div>
+
+                  <!-- Phase S -->
+                  <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                      <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                      Phase S (L2)
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.1" id="sim-volt-s" value="232.3" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.01" id="sim-amp-s" value="4.48" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
+                    </div>
+                  </div>
+
+                  <!-- Phase T -->
+                  <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                      <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                      Phase T (L3)
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.1" id="sim-volt-t" value="221.8" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
+                    </div>
+                    <div class="col-span-4">
+                      <input type="number" step="0.01" id="sim-amp-t" value="17.18" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
+                    </div>
+                  </div>
+
+                  <!-- PF & Active Power -->
+                  <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Power Factor (PF)</label>
+                      <input type="number" step="0.01" id="sim-pf" value="0.90" oninput="recalculateEngineering()" class="w-full text-center px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Active Power (kW)</label>
+                      <input type="text" id="sim-active-power" value="5.10 kW" readonly class="w-full text-center px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-900" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ================= KOLOM TENGAH (KATEGORI STATUS, METRICS & PARAMETER REKAYASA) ================= -->
+            <div class="lg:col-span-4 space-y-5">
+              
+              <!-- Status Site Banner Header (Red / Yellow / Green gradient) -->
+              <div id="sim-status-card" class="status-banner-danger text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                <div class="relative z-10 flex items-start justify-between">
+                  <div>
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider opacity-90 block mb-1">KATEGORI STATUS SITE</span>
+                    <h2 id="sim-status-title" class="text-xl font-black tracking-tight">NEED UPGRADE DAYA</h2>
+                    <p id="sim-status-desc" class="text-xs opacity-90 font-medium mt-0.5">Utilisasi Beban Tinggi (> 75.0% atau Trip Risk)</p>
+                  </div>
+                  <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/30">
+                    <i data-lucide="trending-up" id="sim-status-icon" class="w-5 h-5 text-white"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Two Key Metric Sub-Cards -->
+              <div class="grid grid-cols-2 gap-3.5">
+                <!-- Total Beban -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-4 card-shadow">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">TOTAL BEBAN</span>
+                  <div id="sim-total-beban-kva" class="text-2xl font-black text-slate-900">5.66 <span class="text-sm font-bold text-slate-500">kVA</span></div>
+                  <div class="text-[11px] text-slate-500 font-medium mt-0.5">PLN: <span id="sim-util-pln-percent" class="font-bold text-slate-800">17.2%</span></div>
+                </div>
+
+                <!-- Fasa Kritis -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-4 card-shadow">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">FASA KRITIS</span>
+                  <div id="sim-fasa-kritis-amp" class="text-2xl font-black text-rose-600">17.18 <span class="text-sm font-bold text-rose-400">A</span></div>
+                  <div class="text-[11px] text-slate-500 font-medium mt-0.5">MCB: <span id="sim-util-mcb-percent" class="font-bold text-slate-800">34.4%</span></div>
+                </div>
+              </div>
+
+              <!-- Card: Parameter Rekayasa -->
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4 text-blue-600"></i>
+                    Parameter Rekayasa
+                  </h3>
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Formula Elektrikal</span>
+                </div>
+
+                <div class="space-y-2.5 text-xs">
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                    <span class="text-slate-500">Tegangan Rata-Rata (V_avg)</span>
+                    <div class="font-mono text-right"><span id="sim-v-avg" class="font-bold text-slate-900">230.4 V</span> <span class="text-[10px] text-slate-400">Volt AC</span></div>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                    <span class="text-slate-500">Arus Rata-Rata per Fasa (I_avg)</span>
+                    <div class="font-mono text-right"><span id="sim-i-avg" class="font-bold text-slate-900">8.36 A</span> <span class="text-[10px] text-slate-400">Ampere / Ph</span></div>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                    <span class="text-slate-500">Unbalance Beban Antarfasa</span>
+                    <div class="font-mono text-right"><span id="sim-unbalance" class="font-bold text-amber-600">105.5%</span> <span class="text-[10px] text-slate-400">Normal &lt; 20%</span></div>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                    <span class="text-slate-500">Daya Aktif Nyata (P_total)</span>
+                    <div class="font-mono text-right"><span id="sim-p-total" class="font-bold text-slate-900">5.10 kW</span> <span class="text-[10px] text-slate-400">kVA × PF</span></div>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                    <span class="text-slate-500">Sisa Margin Arus MCB</span>
+                    <div class="font-mono text-right"><span id="sim-mcb-margin" class="font-bold text-emerald-600">32.82 A</span> <span class="text-[10px] text-slate-400">Ampere Sisa</span></div>
+                  </div>
+
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-slate-500">Sisa Margin Daya PLN</span>
+                    <div class="font-mono text-right"><span id="sim-pln-margin" class="font-bold text-emerald-600">27.34 kVA</span> <span class="text-[10px] text-slate-400">kVA Sisa</span></div>
+                  </div>
+                </div>
+
+                <!-- Box Rekomendasi Tindak Lanjut -->
+                <div id="sim-rekomendasi-box" class="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl text-xs space-y-1 mt-2">
+                  <div class="font-bold text-rose-800 flex items-center gap-1.5">
+                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
+                    <span>REKOMENDASI TINDAK LANJUT:</span>
+                  </div>
+                  <p id="sim-rekomendasi-text" class="text-rose-900 leading-relaxed text-[11px]">
+                    Kapasitas daya mencukupi, namun terjadi unbalance beban fasa tinggi (105.5%). Lakukan rebalancing beban Rectifier / AC agar fasa T tidak overload.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ================= KOLOM KANAN (SIMULASI MULTI-SKEMA DAYA KONTRAK PLN) ================= -->
+            <div class="lg:col-span-4 space-y-5">
+              
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div>
+                    <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                      <i data-lucide="split" class="w-4 h-4 text-purple-600"></i>
+                      Simulasi Multi-Skema Daya Kontrak PLN
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Proyeksi utilisasi beban pada variasi skema daya PLN 3-Phase standard.</p>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">Analisis Kapasitas</span>
+                </div>
+
+                <!-- Simulation Matrix Table -->
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold tracking-wider border-b border-slate-100">
+                      <tr>
+                        <th class="py-2.5 px-2">SKEMA DAYA PLN</th>
+                        <th class="py-2.5 px-2 text-center">KAPASITAS</th>
+                        <th class="py-2.5 px-2 text-center">PREDIKSI UTILISASI</th>
+                        <th class="py-2.5 px-2 text-center">UTILISASI MCB</th>
+                        <th class="py-2.5 px-2 text-center">STATUS</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sim-matrix-tbody" class="divide-y divide-slate-100 font-mono text-[11px]">
+                      <!-- Generated Dynamically via JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Panduan Standard Utilisasi Info Box -->
+                <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-[11px] space-y-1.5 text-slate-600">
+                  <div class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
+                    <span>Panduan Standard Utilisasi:</span>
+                  </div>
+                  <div class="space-y-1 pl-5 text-[10px]">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span><strong>&lt; 65%:</strong> Zona Hijau / Sangat Aman (Margin charging baterai cukup)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span><strong>65% – 75%:</strong> Zona Kuning / Warning (Perlu monitoring beban)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                      <span><strong>&gt; 75%:</strong> Zona Merah / Trip Risk (Wajib penyeimbangan atau upgrade)</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= VIEW 2: EXECUTIVE NOP DASHBOARD ================= -->
+        <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <!-- Summary Cards Top -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-            <!-- Total Site -->
-            <div onclick="drillDownAllSites()" class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:border-blue-300 cursor-pointer transition">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Total Site</span>
-                <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="radio" class="w-4 h-4"></i></span>
-              </div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Total Site</span>
               <div id="dash-total-sites" class="text-2xl font-black text-slate-900">4,307</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 font-medium"><span id="dash-vip-count" class="text-amber-600 font-bold">0</span> Site VIP</div>
+              <div class="text-[11px] text-slate-400 mt-0.5"><span id="dash-vip-count" class="text-amber-600 font-bold">0</span> Site VIP</div>
             </div>
-
-            <!-- Power PLN Status -->
-            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Power PLN</span>
-                <span class="p-1.5 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="zap" class="w-4 h-4"></i></span>
-              </div>
-              <div id="dash-pln-safe" onclick="drillDownPln('ALL', 'SAFE')" class="text-2xl font-black text-emerald-600 cursor-pointer hover:underline" title="Klik lihat PLN Safe">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5 font-medium">Safe • <span id="dash-pln-issue" onclick="drillDownPln('ALL', 'ISSUE')" class="text-rose-600 font-bold cursor-pointer hover:underline" title="Klik lihat PLN Issue">0</span> Unsafe</div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Power PLN</span>
+              <div id="dash-pln-safe" class="text-2xl font-black text-emerald-600">0</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Safe • <span id="dash-pln-issue" class="text-rose-600 font-bold">0</span> Unsafe</div>
             </div>
-
-            <!-- Battery Health -->
-            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Baterai</span>
-                <span class="p-1.5 bg-orange-50 text-orange-600 rounded-lg"><i data-lucide="battery-charging" class="w-4 h-4"></i></span>
-              </div>
-              <div id="dash-batt-lithium" onclick="drillDownBatt('ALL', 'LITHIUM')" class="text-2xl font-black text-slate-900 cursor-pointer hover:underline" title="Klik lihat Lithium">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5 font-medium">Lithium • <span id="dash-batt-stolen" onclick="drillDownBatt('ALL', 'ISSUE')" class="text-rose-600 font-bold cursor-pointer hover:underline" title="Klik lihat Stolen / Risk">0</span> Hilang/Risk</div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Baterai</span>
+              <div id="dash-batt-lithium" class="text-2xl font-black text-slate-900">0</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Lithium • <span id="dash-batt-stolen" class="text-rose-600 font-bold">0</span> Hilang/Risk</div>
             </div>
-
-            <!-- Rectifier Condition -->
-            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Rectifier</span>
-                <span class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="cpu" class="w-4 h-4"></i></span>
-              </div>
-              <div id="dash-rect-normal" onclick="drillDownRect('ALL', 'NORMAL')" class="text-2xl font-black text-emerald-600 cursor-pointer hover:underline" title="Klik lihat Rectifier Normal">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5 font-medium">Normal • <span id="dash-rect-critical" onclick="drillDownRect('ALL', 'ISSUE')" class="text-rose-600 font-bold cursor-pointer hover:underline" title="Klik lihat Rectifier Critical/Upgrade">0</span> Need Upgrade</div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Rectifier</span>
+              <div id="dash-rect-normal" class="text-2xl font-black text-emerald-600">0</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Normal • <span id="dash-rect-critical" class="text-rose-600 font-bold">0</span> Upgrade</div>
             </div>
-
-            <!-- Cooling / AC Status -->
-            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Status AC</span>
-                <span class="p-1.5 bg-sky-50 text-sky-600 rounded-lg"><i data-lucide="fan" class="w-4 h-4"></i></span>
-              </div>
-              <div id="dash-ac-active" onclick="drillDownAc('ALL', 'ACTIVE')" class="text-2xl font-black text-slate-900 cursor-pointer hover:underline" title="Klik lihat AC Active">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5 font-medium">Active • <span id="dash-ac-broken" onclick="drillDownAc('ALL', 'ISSUE')" class="text-rose-600 font-bold cursor-pointer hover:underline" title="Klik lihat AC Broken/Check">0</span> Rusak / Check</div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Status AC</span>
+              <div id="dash-ac-active" class="text-2xl font-black text-slate-900">0</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Active • <span id="dash-ac-broken" class="text-rose-600 font-bold">0</span> Broken</div>
             </div>
-
-            <!-- Genset (DG) -->
-            <div onclick="drillDownGenset('ALL', 'ALL')" class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:border-purple-300 cursor-pointer transition" title="Klik lihat Genset Active">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-500 uppercase">Genset (DG)</span>
-                <span class="p-1.5 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="fuel" class="w-4 h-4"></i></span>
-              </div>
+            <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Genset (DG)</span>
               <div id="dash-dg-active" class="text-2xl font-black text-purple-700">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5 font-medium">Unit Active di Site</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Unit Active di Site</div>
             </div>
           </div>
 
-          <!-- NOP Improvement & Health Status Table (With Interactive Drill-Down & Split Genset Columns) -->
-          <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-            <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 bg-slate-50/50">
-              <div>
-                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-                  <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i>
-                  Rekap Kesehatan Infrastruktur & Prioritas Improvement per NOP
-                </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Klik pada angka atau badge issue merah di bawah untuk langsung menuju daftar site bermasalah.</p>
-              </div>
-              <div class="text-[11px] text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">
-                💡 Klik baris teks / issue merah untuk drill-down
-              </div>
+          <!-- NOP Table -->
+          <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-100">
+              <h3 class="font-bold text-sm text-slate-900">Rekap Kesehatan Infrastruktur per NOP</h3>
             </div>
-
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs border-collapse">
-                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-200">
+                <thead class="bg-slate-50 text-slate-600 uppercase font-semibold text-[10px] border-b border-slate-200">
                   <tr>
                     <th class="py-3 px-4">Wilayah (NOP)</th>
                     <th class="py-3 px-4 text-center">Total Site</th>
                     <th class="py-3 px-4 text-center">Power PLN</th>
                     <th class="py-3 px-4 text-center">Baterai</th>
                     <th class="py-3 px-4 text-center">Rectifier</th>
-                    <th class="py-3 px-4 text-center">AC & Pending</th>
-                    <th class="py-3 px-4 text-center bg-purple-50/60 text-purple-900">DG Unit</th>
-                    <th class="py-3 px-4 text-center bg-purple-50/60 text-purple-900">DG Autorate</th>
-                    <th class="py-3 px-4 text-center bg-purple-50/60 text-purple-900">DG Warming Up</th>
-                    <th class="py-3 px-4 text-center">Status NOP</th>
+                    <th class="py-3 px-4 text-center">AC Status</th>
+                    <th class="py-3 px-4 text-center">DG Unit</th>
+                    <th class="py-3 px-4 text-center">DG Autorate</th>
+                    <th class="py-3 px-4 text-center">DG Warming Up</th>
                   </tr>
                 </thead>
-                <tbody id="nop-summary-table-body" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
-                  <!-- Generated via Javascript -->
-                </tbody>
+                <tbody id="nop-summary-table-body" class="divide-y divide-slate-100 font-medium"></tbody>
               </table>
-            </div>
-          </div>
-
-          <!-- Quick Action Shortcut to 7 Modules -->
-          <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-            <h4 class="font-bold text-xs uppercase text-slate-500 tracking-wider mb-3">Eksplorasi Detail 7 Modul Data Teknis (114 Parameter)</h4>
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
-              <button onclick="setModule(0)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="map-pin" class="w-4 h-4 text-blue-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">1. Identity & Loc</div>
-                <div class="text-[10px] text-slate-500">16 Kolom</div>
-              </button>
-              <button onclick="setModule(1)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="users" class="w-4 h-4 text-indigo-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">2. PIC & Provider</div>
-                <div class="text-[10px] text-slate-500">4 Kolom</div>
-              </button>
-              <button onclick="setModule(2)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="radio" class="w-4 h-4 text-cyan-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">3. Dapot RAN</div>
-                <div class="text-[10px] text-slate-500">14 Kolom</div>
-              </button>
-              <button onclick="setModule(3)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="network" class="w-4 h-4 text-emerald-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">4. Transport</div>
-                <div class="text-[10px] text-slate-500">13 Kolom</div>
-              </button>
-              <button onclick="setModule(4)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="zap" class="w-4 h-4 text-amber-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">5. Power PLN</div>
-                <div class="text-[10px] text-slate-500">17 Kolom</div>
-              </button>
-              <button onclick="setModule(5)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="battery-charging" class="w-4 h-4 text-orange-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">6. Rectifier & Batt</div>
-                <div class="text-[10px] text-slate-500">22 Kolom</div>
-              </button>
-              <button onclick="setModule(6)" class="p-3 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 rounded-xl text-left transition group">
-                <i data-lucide="fan" class="w-4 h-4 text-sky-600 mb-1.5"></i>
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-700">7. Cooling & DG</div>
-                <div class="text-[10px] text-slate-500">28 Kolom</div>
-              </button>
             </div>
           </div>
         </div>
 
-        <!-- ================= B. DATA TABLE VIEW (FOR 7 MODULES) ================= -->
-        <div id="module-data-view" class="hidden flex-1 flex flex-col min-h-0 bg-white">
-          
-          <!-- Active Filter Banner (When Clicked from Dashboard) -->
-          <div id="active-filter-banner" class="hidden px-4 py-2 bg-blue-50 border-b border-blue-100 flex items-center justify-between text-xs">
-            <div class="flex items-center gap-2">
-              <span class="font-semibold text-blue-900 flex items-center gap-1.5">
-                <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-600"></i>
-                Filter Aktif:
-              </span>
-              <span id="active-filter-label" class="px-2.5 py-0.5 bg-blue-600 text-white font-medium rounded-full text-[11px]">
-                NOP BEKASI • PLN Issue
-              </span>
-            </div>
-            <button onclick="clearCustomDrillDown()" class="text-blue-700 hover:text-blue-900 font-bold flex items-center gap-1 text-[11px] underline">
-              <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset Filter
-            </button>
-          </div>
-
-          <!-- Table Search & Filter Bar -->
+        <!-- ================= VIEW 3: MASTER DATA 114 PARAMETERS (7 MODULES) ================= -->
+        <div id="view-modules" class="hidden flex-1 flex flex-col min-h-0 bg-white">
+          <!-- Filter Bar -->
           <div class="p-3.5 border-b border-slate-200 bg-white flex flex-wrap gap-2.5 items-center justify-between">
             <div class="flex items-center gap-2 flex-1 max-w-md min-w-[240px]">
               <div class="relative w-full">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-                <input type="text" id="global-search-input" oninput="applyFilters()" placeholder="Cari Site ID, Site Name, NOP, Kota, PIC, Alamat..." class="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition" />
+                <input type="text" id="global-search-input" oninput="applyFilters()" placeholder="Cari Site ID, Site Name, NOP, Kota, PIC..." class="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-rose-500" />
               </div>
             </div>
 
             <div class="flex items-center gap-2">
-              <select id="filter-nop" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-600">
+              <select id="filter-nop" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5">
                 <option value="ALL">Semua NOP</option>
                 <option value="NOP BOGOR">NOP BOGOR</option>
                 <option value="NOP KARAWANG">NOP KARAWANG</option>
                 <option value="NOP BEKASI">NOP BEKASI</option>
               </select>
-
-              <select id="filter-vip" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-600">
-                <option value="ALL">Semua Status VIP</option>
+              <select id="filter-vip" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5">
+                <option value="ALL">Semua VIP</option>
                 <option value="VIP">Hanya VIP</option>
                 <option value="NON-VIP">Non-VIP</option>
               </select>
-
-              <select id="filter-tp" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-600">
-                <option value="ALL">Semua Tower Provider (TP)</option>
-              </select>
-
-              <select id="page-size-select" onchange="changePageSize()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-blue-600">
-                <option value="25">25 / page</option>
+              <select id="page-size-select" onchange="changePageSize()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5">
                 <option value="50" selected>50 / page</option>
                 <option value="100">100 / page</option>
                 <option value="500">500 / page</option>
@@ -461,12 +630,8 @@
           <!-- Table Content -->
           <div class="flex-1 overflow-auto relative">
             <table class="w-full border-collapse text-left text-xs whitespace-nowrap">
-              <thead id="table-header" class="sticky top-0 bg-slate-100 border-b border-slate-200 z-10 text-slate-600 font-semibold shadow-xs">
-                <!-- Rendered via JS -->
-              </thead>
-              <tbody id="table-body" class="divide-y divide-slate-200 text-slate-700 font-mono text-[11px]">
-                <!-- Rendered via JS -->
-              </tbody>
+              <thead id="table-header" class="sticky top-0 bg-slate-100 border-b border-slate-200 z-10 text-slate-600 font-semibold"></thead>
+              <tbody id="table-body" class="divide-y divide-slate-200 text-slate-700 font-mono text-[11px]"></tbody>
             </table>
           </div>
 
@@ -474,13 +639,9 @@
           <div class="h-12 border-t border-slate-200 bg-slate-50 px-4 flex items-center justify-between text-xs text-slate-500">
             <div id="pagination-info">Menampilkan 0 - 0 dari 0 data</div>
             <div class="flex items-center gap-1.5">
-              <button onclick="prevPage()" id="prev-btn" class="p-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 disabled:opacity-40 text-slate-700">
-                <i data-lucide="chevron-left" class="w-4 h-4"></i>
-              </button>
+              <button onclick="prevPage()" id="prev-btn" class="p-1.5 rounded-lg bg-white border border-slate-300 disabled:opacity-40"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
               <span id="current-page-num" class="px-3 py-1 font-bold text-slate-900 bg-white border border-slate-300 rounded-lg text-xs">1</span>
-              <button onclick="nextPage()" id="next-btn" class="p-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 disabled:opacity-40 text-slate-700">
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-              </button>
+              <button onclick="nextPage()" id="next-btn" class="p-1.5 rounded-lg bg-white border border-slate-300 disabled:opacity-40"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
             </div>
           </div>
         </div>
@@ -489,10 +650,9 @@
     </div>
   </div>
 
-  <!-- ================= 5. MODAL DETAIL DOSSIER (WHITE THEME) ================= -->
+  <!-- ================= 5. FULL DETAIL MODAL ================= -->
   <div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      <!-- Modal Header -->
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
         <div>
           <div class="flex items-center gap-2.5">
@@ -500,20 +660,17 @@
             <span id="modal-site-vip" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">VIP</span>
             <span id="modal-site-class" class="text-xs text-slate-600 font-medium">Class: Gold</span>
           </div>
-          <p id="modal-site-name" class="text-xs text-slate-500 mt-1 font-sans">MM2100 • Gandamekar, Cikarang Barat, Bekasi</p>
+          <p id="modal-site-name" class="text-xs text-slate-500 mt-1 font-sans">MM2100</p>
         </div>
-        
         <div class="flex items-center gap-2">
-          <a id="modal-gmaps-link" href="#" target="_blank" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
-            <i data-lucide="map" class="w-3.5 h-3.5"></i> Google Maps
-          </a>
-          <button onclick="closeDetailModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-xl bg-slate-100 hover:bg-slate-200 transition">
+          <button onclick="loadSiteToSimulator(activeModalSite['Site ID']); closeDetailModal();" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Buka di Simulator
+          </button>
+          <button onclick="closeDetailModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-xl bg-slate-100 transition">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
       </div>
-
-      <!-- Modal Tabs for 7 Modules -->
       <div class="px-5 border-b border-slate-200 bg-slate-100/60 flex gap-1.5 overflow-x-auto shrink-0 py-2 text-xs font-medium">
         <button onclick="switchModalTab(0)" class="modal-tab-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold" id="modal-tab-0">1. Identity</button>
         <button onclick="switchModalTab(1)" class="modal-tab-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200" id="modal-tab-1">2. PIC & TP</button>
@@ -523,11 +680,7 @@
         <button onclick="switchModalTab(5)" class="modal-tab-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200" id="modal-tab-5">6. Rectifier</button>
         <button onclick="switchModalTab(6)" class="modal-tab-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200" id="modal-tab-6">7. Cooling & DG</button>
       </div>
-
-      <!-- Modal Body Content -->
-      <div id="modal-detail-content" class="p-5 overflow-y-auto flex-1 bg-white text-xs">
-        <!-- Rendered by switchModalTab() -->
-      </div>
+      <div id="modal-detail-content" class="p-5 overflow-y-auto flex-1 bg-white text-xs"></div>
     </div>
   </div>
 
@@ -699,12 +852,19 @@
       }
     ];
 
+    const STANDARD_3PHASE_SCHEMAS = [
+      { name: "3-Phase 3x16A", kva: 11.0, mcb: 16 },
+      { name: "3-Phase 3x20A", kva: 13.2, mcb: 20 },
+      { name: "3-Phase 3x25A", kva: 16.5, mcb: 25 },
+      { name: "3-Phase 3x35A", kva: 23.0, mcb: 35 },
+      { name: "3-Phase 3x50A", kva: 33.0, mcb: 50 },
+      { name: "3-Phase 3x63A", kva: 41.5, mcb: 63 }
+    ];
+
     let rawSitesData = [];
     let filteredData = [];
-    let customFilterPredicate = null;
-    let customFilterLabel = "";
     let currentModuleIndex = 0;
-    let isDashboardActive = true;
+    let currentActiveView = 'simulator';
     let currentPage = 1;
     let pageSize = 50;
     let activeModalSite = null;
@@ -725,14 +885,13 @@
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       checkSavedFirebaseConfig();
+      recalculateEngineering();
     });
 
-    // --- TRAY MENU TOGGLE ---
     function toggleSidebarTray() {
       const tray = document.getElementById('sidebar-tray');
       const backdrop = document.getElementById('tray-backdrop');
       const isHidden = tray.classList.contains('-translate-x-full');
-      
       if (isHidden) {
         tray.classList.remove('-translate-x-full');
         backdrop.classList.remove('hidden');
@@ -760,7 +919,7 @@
         localStorage.setItem('sme_firebase_config', JSON.stringify(config));
         initFirebase(config);
         toggleConfigModal(false);
-        alert('Firebase Config berhasil disimpan!');
+        alert('Firebase Config tersimpan!');
       } catch (err) {
         alert('Format JSON tidak valid: ' + err.message);
       }
@@ -790,9 +949,14 @@
 
             if (list && list.length > 0) {
               rawSitesData = list.filter(item => item && (item['Site ID'] || item.site_id || item['Site Name']));
+              document.getElementById('sim-badge-site-count').textContent = `● ${rawSitesData.length.toLocaleString()} Sites`;
+              document.getElementById('stat-total').textContent = rawSitesData.length.toLocaleString();
+              document.getElementById('stat-loaded').textContent = `${rawSitesData.length.toLocaleString()} Site`;
+              
               populateFilters();
               applyFilters();
               calculateDashboardMetrics();
+              
               document.getElementById('firebase-status-badge').classList.remove('hidden');
               document.getElementById('firebase-status-text').textContent = `Realtime: ${rawSitesData.length} Sites`;
             }
@@ -803,12 +967,11 @@
       }
     }
 
-    // --- AUTH FLOW ---
     function bypassDemoLogin() {
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
       lucide.createIcons();
-      showExecutiveDashboard();
+      switchViewMode('simulator');
     }
 
     function handleLogout() {
@@ -819,56 +982,257 @@
       document.getElementById('auth-screen').classList.remove('hidden');
     }
 
-    // --- DASHBOARD VIEW & METRICS ---
-    function showExecutiveDashboard() {
-      isDashboardActive = true;
-      document.getElementById('executive-dashboard-view').classList.remove('hidden');
-      document.getElementById('module-data-view').classList.add('hidden');
-      document.getElementById('active-modul-title').textContent = "Dashboard Ringkasan Eksekutif & Kondisi NOP";
+    // ================= VIEW SWITCHER =================
+    function switchViewMode(mode) {
+      currentActiveView = mode;
+      
+      document.getElementById('view-simulator').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-modules').classList.add('hidden');
 
-      document.querySelectorAll('.modul-nav-btn').forEach(b => {
-        b.className = "modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition";
-      });
-      document.getElementById('modul-btn-dash').className = "modul-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition bg-blue-50 text-blue-700 border border-blue-200";
+      document.getElementById('btn-view-sim').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
+      document.getElementById('btn-view-dash').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
+      document.getElementById('btn-view-mods').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
 
-      calculateDashboardMetrics();
+      if (mode === 'simulator') {
+        document.getElementById('view-simulator').classList.remove('hidden');
+        document.getElementById('btn-view-sim').className = "px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
+        document.getElementById('active-modul-title').textContent = "Profil & Kontrak Site R12 • Simulasi Daya PLN";
+        recalculateEngineering();
+      } else if (mode === 'dashboard') {
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        document.getElementById('btn-view-dash').className = "px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
+        document.getElementById('active-modul-title').textContent = "Dashboard Ringkasan Eksekutif & Kondisi NOP";
+        calculateDashboardMetrics();
+      } else if (mode === 'modules') {
+        document.getElementById('view-modules').classList.remove('hidden');
+        document.getElementById('btn-view-mods').className = "px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
+        setModule(currentModuleIndex);
+      }
+      lucide.createIcons();
     }
 
+    // ================= SIMULATOR AUTO-COMPLETE & SEARCH =================
+    function handleSimSiteSearch(query) {
+      const resContainer = document.getElementById('sim-search-results');
+      if (!query || query.length < 2) {
+        resContainer.classList.add('hidden');
+        return;
+      }
+
+      const q = query.toLowerCase().trim();
+      const matches = rawSitesData.filter(s => {
+        const id = String(s['Site ID'] || '').toLowerCase();
+        const name = String(s['Site Name'] || '').toLowerCase();
+        return id.includes(q) || name.includes(q);
+      }).slice(0, 10);
+
+      if (matches.length === 0) {
+        resContainer.innerHTML = '<div class="p-3 text-slate-400 text-center">Site tidak ditemukan</div>';
+        resContainer.classList.remove('hidden');
+        return;
+      }
+
+      let html = '';
+      matches.forEach(s => {
+        html += `
+          <div onclick="loadSiteToSimulator('${escapeQuotes(s['Site ID'])}')" class="p-2.5 hover:bg-rose-50 cursor-pointer flex items-center justify-between transition">
+            <div>
+              <span class="font-bold text-slate-900">${s['Site ID']}</span>
+              <span class="text-slate-500 ml-1.5">• ${s['Site Name'] || '-'}</span>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${s['NOP'] || '-'}</span>
+          </div>
+        `;
+      });
+
+      resContainer.innerHTML = html;
+      resContainer.classList.remove('hidden');
+    }
+
+    function loadSiteToSimulator(siteId) {
+      document.getElementById('sim-search-results').classList.add('hidden');
+      document.getElementById('sim-search-input').value = "";
+
+      const s = rawSitesData.find(item => String(item['Site ID']).trim() === String(siteId).trim());
+      if (!s) return;
+
+      document.getElementById('sim-site-id').value = s['Site ID'] || '-';
+      document.getElementById('sim-nop').value = s['NOP'] || '-';
+      document.getElementById('sim-site-name').value = s['Site Name'] || '-';
+
+      // Telemetry Volt & Amper
+      document.getElementById('sim-volt-r').value = parseFloat(s['VoltR']) || 220.0;
+      document.getElementById('sim-volt-s').value = parseFloat(s['VoltS']) || 220.0;
+      document.getElementById('sim-volt-t').value = parseFloat(s['VoltT']) || 220.0;
+      document.getElementById('sim-amp-r').value = parseFloat(s['AmperR']) || 5.0;
+      document.getElementById('sim-amp-s').value = parseFloat(s['AmperS']) || 5.0;
+      document.getElementById('sim-amp-t').value = parseFloat(s['AmperT']) || 5.0;
+      document.getElementById('sim-pf').value = parseFloat(s['Power Factor']) || 0.90;
+
+      // Contract Capacity
+      const capVal = parseFloat(s['Capacity']) || 33000;
+      const phaseVal = String(s['Phase'] || '').includes('1') ? 1 : 3;
+      
+      const select = document.getElementById('sim-contract-select');
+      let found = false;
+      for (let i = 0; i < select.options.length; i++) {
+        const [optCap, optPh] = select.options[i].value.split('|');
+        if (parseFloat(optCap) === capVal && parseInt(optPh) === phaseVal) {
+          select.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        select.selectedIndex = 5; // Default 33 kVA
+      }
+      handleContractChange();
+    }
+
+    function handleContractChange() {
+      const selectVal = document.getElementById('sim-contract-select').value;
+      const [cap, phase, mcb] = selectVal.split('|');
+      document.getElementById('sim-mcb-rating').value = mcb;
+      recalculateEngineering();
+    }
+
+    // ================= CORE ELECTRICAL ENGINEERING & SIMULATION FORMULAS =================
+    function recalculateEngineering() {
+      const vr = parseFloat(document.getElementById('sim-volt-r').value) || 0;
+      const vs = parseFloat(document.getElementById('sim-volt-s').value) || 0;
+      const vt = parseFloat(document.getElementById('sim-volt-t').value) || 0;
+      const ir = parseFloat(document.getElementById('sim-amp-r').value) || 0;
+      const is = parseFloat(document.getElementById('sim-amp-s').value) || 0;
+      const it = parseFloat(document.getElementById('sim-amp-t').value) || 0;
+      const pf = parseFloat(document.getElementById('sim-pf').value) || 0.90;
+
+      const [capStr, phaseStr, defaultMcb] = document.getElementById('sim-contract-select').value.split('|');
+      const contractKva = (parseFloat(capStr) || 33000) / 1000;
+      const ratingMcb = parseFloat(document.getElementById('sim-mcb-rating').value) || parseFloat(defaultMcb) || 50;
+
+      // Calculations
+      const vAvg = (vr + vs + vt) / 3;
+      const iAvg = (ir + is + it) / 3;
+      const fasaKritis = Math.max(ir, is, it);
+      
+      // Total Apparent Power (kVA)
+      const totalKva = (vr * ir + vs * is + vt * it) / 1000;
+      const activePowerKw = totalKva * pf;
+
+      // Utilizations
+      const utilPln = (totalKva / contractKva) * 100;
+      const utilMcb = (fasaKritis / ratingMcb) * 100;
+
+      // Unbalance %
+      const maxDiff = Math.max(Math.abs(ir - iAvg), Math.abs(is - iAvg), Math.abs(it - iAvg));
+      const unbalance = iAvg > 0 ? (maxDiff / iAvg) * 100 : 0;
+
+      // Margins
+      const marginMcb = Math.max(0, ratingMcb - fasaKritis);
+      const marginPln = Math.max(0, contractKva - totalKva);
+
+      // DOM Updates (Middle Column)
+      document.getElementById('sim-total-beban-kva').innerHTML = `${totalKva.toFixed(2)} <span class="text-sm font-bold text-slate-500">kVA</span>`;
+      document.getElementById('sim-util-pln-percent').textContent = `${utilPln.toFixed(1)}%`;
+      document.getElementById('sim-fasa-kritis-amp').innerHTML = `${fasaKritis.toFixed(2)} <span class="text-sm font-bold text-rose-400">A</span>`;
+      document.getElementById('sim-util-mcb-percent').textContent = `${utilMcb.toFixed(1)}%`;
+
+      document.getElementById('sim-active-power').value = `${activePowerKw.toFixed(2)} kW`;
+      document.getElementById('sim-v-avg').textContent = `${vAvg.toFixed(1)} V`;
+      document.getElementById('sim-i-avg').textContent = `${iAvg.toFixed(2)} A`;
+      document.getElementById('sim-unbalance').textContent = `${unbalance.toFixed(1)}%`;
+      document.getElementById('sim-unbalance').className = unbalance > 20 ? "font-bold text-amber-600" : "font-bold text-emerald-600";
+      document.getElementById('sim-p-total').textContent = `${activePowerKw.toFixed(2)} kW`;
+      document.getElementById('sim-mcb-margin').textContent = `${marginMcb.toFixed(2)} A`;
+      document.getElementById('sim-pln-margin').textContent = `${marginPln.toFixed(2)} kVA`;
+
+      // Status Banner & Recommendation Evaluation
+      const statusCard = document.getElementById('sim-status-card');
+      const statusTitle = document.getElementById('sim-status-title');
+      const statusDesc = document.getElementById('sim-status-desc');
+      const recoBox = document.getElementById('sim-rekomendasi-box');
+      const recoText = document.getElementById('sim-rekomendasi-text');
+
+      if (utilMcb > 75 || utilPln > 75) {
+        statusCard.className = "status-banner-danger text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusTitle.textContent = "NEED UPGRADE DAYA";
+        statusDesc.textContent = `Utilisasi Beban Kritis (PLN: ${utilPln.toFixed(1)}% / MCB: ${utilMcb.toFixed(1)}%)`;
+        recoBox.className = "p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs space-y-1 mt-2";
+        recoText.textContent = `OVERLOAD RISK: Beban total ${totalKva.toFixed(2)} kVA / Arus fasa ${fasaKritis.toFixed(1)}A mendekati batas trip MCB ${ratingMcb}A (${utilMcb.toFixed(1)}%). Tindakan: Ajukan penambahan daya PLN ke kapasitas lebih tinggi agar tersedia margin charging baterai.`;
+      } else if (utilMcb > 65 || utilPln > 65 || unbalance > 25) {
+        statusCard.className = "status-banner-warning text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusTitle.textContent = "PERLU MONITORING BEBAN";
+        statusDesc.textContent = `Utilisasi Sedang / Unbalance Fasa (${unbalance.toFixed(1)}%)`;
+        recoBox.className = "p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-1 mt-2";
+        recoText.textContent = `WARNING: Terdeteksi unbalance arus antarfasa sebesar ${unbalance.toFixed(1)}% atau utilisasi mendekati batas aman. Lakukan rebalancing fasa pada ACPDB agar beban terdistribusi merata.`;
+      } else {
+        statusCard.className = "status-banner-safe text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusTitle.textContent = "KAPASITAS SANGAT AMAN";
+        statusDesc.textContent = `Utilisasi Ideal (PLN: ${utilPln.toFixed(1)}% / MCB: ${utilMcb.toFixed(1)}%)`;
+        recoBox.className = "p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1 mt-2";
+        recoText.textContent = `Kondisi kelistrikan sangat stabil. Sisa margin daya PLN (${marginPln.toFixed(2)} kVA) dan margin arus MCB (${marginMcb.toFixed(2)} A) sangat aman untuk penambahan perangkat RAN / Rectifier baru.`;
+      }
+
+      // Render Multi-Schema Matrix (Right Column)
+      renderMultiSchemaMatrix(totalKva, fasaKritis);
+    }
+
+    function renderMultiSchemaMatrix(totalKva, fasaKritis) {
+      const tbody = document.getElementById('sim-matrix-tbody');
+      let html = '';
+
+      STANDARD_3PHASE_SCHEMAS.forEach(sch => {
+        const predUtilPln = (totalKva / sch.kva) * 100;
+        const predUtilMcb = (fasaKritis / sch.mcb) * 100;
+
+        let badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Sangat Aman</span>';
+        if (predUtilMcb > 75 || predUtilPln > 75) {
+          badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Warning (Trip Risk)</span>';
+        } else if (predUtilMcb > 65 || predUtilPln > 65) {
+          badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Perlu Monitor</span>';
+        }
+
+        const mcbClass = predUtilMcb > 75 ? "text-rose-600 font-bold" : "text-slate-700";
+
+        html += `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-2 font-bold text-slate-800">${sch.name}</td>
+            <td class="py-2.5 px-2 text-center text-slate-700">${sch.kva.toFixed(1)} kVA</td>
+            <td class="py-2.5 px-2 text-center font-bold text-slate-900">${predUtilPln.toFixed(1)}%</td>
+            <td class="py-2.5 px-2 text-center ${mcbClass}">${predUtilMcb.toFixed(1)}%</td>
+            <td class="py-2.5 px-2 text-center">${badge}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // ================= EXECUTIVE DASHBOARD & 7 MODULES LOGIC =================
     function calculateDashboardMetrics() {
       if (!rawSitesData.length) return;
-
       const total = rawSitesData.length;
       const vipCount = rawSitesData.filter(r => String(r['Status VIP'] || '').toUpperCase() === 'VIP').length;
-      
-      // Power PLN
       const plnSafe = rawSitesData.filter(r => String(r['Capacity Status'] || '').toUpperCase() === 'SAFE').length;
       const plnUnsafe = rawSitesData.filter(r => ['NOT SAFE', 'WARNING'].includes(String(r['Capacity Status'] || '').toUpperCase())).length;
-
-      // Battery
       const battLithium = rawSitesData.filter(r => String(r['Battery Type'] || '').toUpperCase().includes('LITHIUM')).length;
       const battStolen = rawSitesData.filter(r => {
         const s = String(r['Battery Type'] || '').toUpperCase();
         return s.includes('STOLEN') || s.includes('NO BATTERY') || s.includes('NEED CHECK');
       }).length;
-
-      // Rectifier
       const rectNormal = rawSitesData.filter(r => String(r['Rectifier Condition'] || '').toUpperCase().includes('NORMAL')).length;
       const rectCritical = rawSitesData.filter(r => {
         const s = String(r['Rectifier Condition'] || '').toUpperCase();
         return s.includes('CRITICAL') || s.includes('UPGRADE');
       }).length;
-
-      // AC
       const acActive = rawSitesData.filter(r => String(r['Status AC'] || '').toUpperCase() === 'ACTIVE').length;
       const acBroken = rawSitesData.filter(r => {
         const s = String(r['Status AC'] || '').toUpperCase();
         return s.includes('BROKEN') || s.includes('NEED CHECK');
       }).length;
-
-      // DG
       const dgActive = rawSitesData.filter(r => String(r['DG Status'] || '').toUpperCase() === 'ACTIVE').length;
 
-      // Update Metric Display
       document.getElementById('dash-total-sites').textContent = total.toLocaleString();
       document.getElementById('dash-vip-count').textContent = vipCount.toLocaleString();
       document.getElementById('dash-pln-safe').textContent = plnSafe.toLocaleString();
@@ -889,49 +1253,26 @@
       rawSitesData.forEach(r => {
         const nop = String(r['NOP'] || 'LAINNYA').trim();
         if (!nopGroups[nop]) {
-          nopGroups[nop] = {
-            total: 0,
-            plnSafe: 0,
-            plnIssue: 0,
-            battLithium: 0,
-            battStolen: 0,
-            rectNormal: 0,
-            rectIssue: 0,
-            acActive: 0,
-            acBroken: 0,
-            dgCount: 0,
-            autorateAuto: 0,
-            autorateIssue: 0,
-            warmingAuto: 0,
-            warmingIssue: 0
-          };
+          nopGroups[nop] = { total: 0, plnSafe: 0, plnIssue: 0, battLithium: 0, battStolen: 0, rectNormal: 0, rectIssue: 0, acActive: 0, acBroken: 0, dgCount: 0, autorateAuto: 0, autorateIssue: 0, warmingAuto: 0, warmingIssue: 0 };
         }
         const g = nopGroups[nop];
         g.total++;
-        
         const cap = String(r['Capacity Status'] || '').toUpperCase();
         if (cap === 'SAFE') g.plnSafe++;
         if (['NOT SAFE', 'WARNING'].includes(cap)) g.plnIssue++;
-
         const batt = String(r['Battery Type'] || '').toUpperCase();
         if (batt.includes('LITHIUM')) g.battLithium++;
         if (batt.includes('STOLEN') || batt.includes('NO BATTERY') || batt.includes('NEED CHECK')) g.battStolen++;
-
         const rect = String(r['Rectifier Condition'] || '').toUpperCase();
         if (rect.includes('NORMAL')) g.rectNormal++;
         if (rect.includes('CRITICAL') || rect.includes('UPGRADE')) g.rectIssue++;
-
         const ac = String(r['Status AC'] || '').toUpperCase();
         if (ac === 'ACTIVE') g.acActive++;
         if (ac.includes('BROKEN') || ac.includes('NEED CHECK')) g.acBroken++;
-
         if (String(r['DG Status'] || '').toUpperCase() === 'ACTIVE') g.dgCount++;
-
-        // Autorate & Warming Up Analysis
         const autorate = String(r['Current Week Genset Condition Autorate'] || '').toUpperCase();
         if (autorate === 'AUTO') g.autorateAuto++;
         else if (autorate && autorate !== '0' && autorate !== 'NAN' && autorate !== 'EMPTY') g.autorateIssue++;
-
         const warming = String(r['Current Week Genset Condition Warming Up'] || '').toUpperCase();
         if (warming === 'AUTO') g.warmingAuto++;
         else if (warming && warming !== '0' && warming !== 'NAN' && warming !== 'EMPTY') g.warmingIssue++;
@@ -939,230 +1280,31 @@
 
       const tbody = document.getElementById('nop-summary-table-body');
       let html = '';
-
       Object.keys(nopGroups).sort().forEach(nop => {
         const d = nopGroups[nop];
-        
-        let improveBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Kondisi Stabil</span>';
-        if (d.battStolen > 50 || d.plnIssue > 5 || d.rectIssue > 10 || d.autorateIssue > 3) {
-          improveBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 animate-pulse">Butuh Improvement</span>';
-        } else if (d.battStolen > 20 || d.acBroken > 20) {
-          improveBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Perlu Monitoring</span>';
-        }
-
-        const escNop = escapeQuotes(nop);
-
         html += `
-          <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
             <td class="py-3 px-4 font-bold text-slate-900">${nop}</td>
-            
-            <!-- Total Sites -->
-            <td class="py-3 px-4 text-center">
-              <button onclick="drillDownNop('${escNop}')" class="font-bold text-blue-700 hover:underline px-2 py-0.5 rounded hover:bg-blue-50" title="Klik untuk lihat semua site di ${nop}">${d.total.toLocaleString()}</button>
-            </td>
-
-            <!-- Power PLN -->
-            <td class="py-3 px-4 text-center">
-              <button onclick="drillDownPln('${escNop}', 'SAFE')" class="text-emerald-700 font-bold hover:underline" title="Klik lihat PLN Safe">${d.plnSafe} Safe</button> 
-              ${d.plnIssue > 0 ? `<button onclick="drillDownPln('${escNop}', 'ISSUE')" class="text-rose-600 font-bold ml-1.5 px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 hover:bg-rose-100 transition clickable-issue" title="Klik menuju ${d.plnIssue} site PLN bermasalah">${d.plnIssue} Issue</button>` : ''}
-            </td>
-
-            <!-- Battery -->
-            <td class="py-3 px-4 text-center">
-              <button onclick="drillDownBatt('${escNop}', 'LITHIUM')" class="text-slate-800 hover:underline" title="Klik lihat Lithium">${d.battLithium} Lithium</button> 
-              ${d.battStolen > 0 ? `<button onclick="drillDownBatt('${escNop}', 'ISSUE')" class="text-rose-600 font-bold ml-1.5 px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 hover:bg-rose-100 transition clickable-issue" title="Klik menuju ${d.battStolen} site baterai hilang/risk">${d.battStolen} Stolen</button>` : ''}
-            </td>
-
-            <!-- Rectifier -->
-            <td class="py-3 px-4 text-center">
-              <button onclick="drillDownRect('${escNop}', 'NORMAL')" class="text-emerald-700 hover:underline" title="Klik lihat Rectifier Normal">${d.rectNormal} Normal</button> 
-              ${d.rectIssue > 0 ? `<button onclick="drillDownRect('${escNop}', 'ISSUE')" class="text-amber-700 font-bold ml-1.5 px-1.5 py-0.5 rounded bg-amber-50 border border-amber-200 hover:bg-amber-100 transition" title="Klik menuju ${d.rectIssue} site rectifier butuh upgrade">${d.rectIssue} Upgrade</button>` : ''}
-            </td>
-
-            <!-- AC & Pending -->
-            <td class="py-3 px-4 text-center">
-              <button onclick="drillDownAc('${escNop}', 'ACTIVE')" class="text-slate-700 hover:underline" title="Klik lihat AC Active">${d.acActive} Active</button> 
-              ${d.acBroken > 0 ? `<button onclick="drillDownAc('${escNop}', 'ISSUE')" class="text-rose-600 font-bold ml-1.5 px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 hover:bg-rose-100 transition clickable-issue" title="Klik menuju ${d.acBroken} site AC broken/check">${d.acBroken} Broken</button>` : ''}
-            </td>
-
-            <!-- DG Unit -->
-            <td class="py-3 px-4 text-center bg-purple-50/30">
-              <button onclick="drillDownGenset('${escNop}', 'ALL')" class="font-bold text-purple-700 hover:underline" title="Klik lihat unit Genset">${d.dgCount} DG</button>
-            </td>
-
-            <!-- DG Autorate -->
-            <td class="py-3 px-4 text-center bg-purple-50/30">
-              <button onclick="drillDownGenset('${escNop}', 'AUTORATE_AUTO')" class="text-emerald-700 font-medium hover:underline" title="Autorate Auto">${d.autorateAuto} Auto</button>
-              ${d.autorateIssue > 0 ? `<button onclick="drillDownGenset('${escNop}', 'AUTORATE_ISSUE')" class="text-rose-600 font-bold ml-1 px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 hover:bg-rose-100 transition clickable-issue" title="Klik menuju ${d.autorateIssue} DG Autorate Bermasalah">${d.autorateIssue} Issue</button>` : ''}
-            </td>
-
-            <!-- DG Warming Up -->
-            <td class="py-3 px-4 text-center bg-purple-50/30">
-              <button onclick="drillDownGenset('${escNop}', 'WARMING_AUTO')" class="text-emerald-700 font-medium hover:underline" title="Warming Up Auto">${d.warmingAuto} Auto</button>
-              ${d.warmingIssue > 0 ? `<button onclick="drillDownGenset('${escNop}', 'WARMING_ISSUE')" class="text-rose-600 font-bold ml-1 px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 hover:bg-rose-100 transition clickable-issue" title="Klik menuju ${d.warmingIssue} DG Warming Up Bermasalah">${d.warmingIssue} Issue</button>` : ''}
-            </td>
-
-            <!-- Status Improvement -->
-            <td class="py-3 px-4 text-center">${improveBadge}</td>
+            <td class="py-3 px-4 text-center font-bold text-slate-800">${d.total.toLocaleString()}</td>
+            <td class="py-3 px-4 text-center"><span class="text-emerald-700 font-bold">${d.plnSafe}</span> ${d.plnIssue > 0 ? `<span class="text-rose-600 font-bold ml-1">(${d.plnIssue} Issue)</span>` : ''}</td>
+            <td class="py-3 px-4 text-center"><span class="text-slate-800">${d.battLithium}</span> ${d.battStolen > 0 ? `<span class="text-rose-600 font-bold ml-1">(${d.battStolen} Stolen)</span>` : ''}</td>
+            <td class="py-3 px-4 text-center"><span class="text-emerald-700">${d.rectNormal}</span> ${d.rectIssue > 0 ? `<span class="text-amber-600 font-bold ml-1">(${d.rectIssue} Upgr)</span>` : ''}</td>
+            <td class="py-3 px-4 text-center"><span class="text-slate-700">${d.acActive}</span> ${d.acBroken > 0 ? `<span class="text-rose-600 font-bold ml-1">(${d.acBroken} Brok)</span>` : ''}</td>
+            <td class="py-3 px-4 text-center font-bold text-purple-700">${d.dgCount} DG</td>
+            <td class="py-3 px-4 text-center"><span class="text-emerald-700">${d.autorateAuto} Auto</span> ${d.autorateIssue > 0 ? `<span class="text-rose-600 font-bold ml-1">(${d.autorateIssue} Issue)</span>` : ''}</td>
+            <td class="py-3 px-4 text-center"><span class="text-emerald-700">${d.warmingAuto} Auto</span> ${d.warmingIssue > 0 ? `<span class="text-rose-600 font-bold ml-1">(${d.warmingIssue} Issue)</span>` : ''}</td>
           </tr>
         `;
       });
-
       tbody.innerHTML = html;
       lucide.createIcons();
     }
 
-    // ================= INTERACTIVE DRILL-DOWN FILTER FUNCTIONS =================
-
-    function setupDrillDownView(moduleIdx, label, predicate) {
-      customFilterPredicate = predicate;
-      customFilterLabel = label;
-      
-      document.getElementById('active-filter-label').textContent = label;
-      document.getElementById('active-filter-banner').classList.remove('hidden');
-
-      setModule(moduleIdx);
-      applyFilters();
-    }
-
-    function clearCustomDrillDown() {
-      customFilterPredicate = null;
-      customFilterLabel = "";
-      document.getElementById('active-filter-banner').classList.add('hidden');
-      document.getElementById('filter-nop').value = "ALL";
-      document.getElementById('filter-vip').value = "ALL";
-      document.getElementById('filter-tp').value = "ALL";
-      document.getElementById('global-search-input').value = "";
-      applyFilters();
-    }
-
-    function drillDownAllSites() {
-      clearCustomDrillDown();
-      setModule(0);
-    }
-
-    function drillDownNop(nop) {
-      document.getElementById('filter-nop').value = nop;
-      setupDrillDownView(0, `Wilayah: ${nop} (Semua Parameter)`, (item) => String(item['NOP'] || '').toUpperCase() === nop.toUpperCase());
-    }
-
-    // Power PLN Drill Down (Modul 5)
-    function drillDownPln(nop, type) {
-      if (nop !== 'ALL') document.getElementById('filter-nop').value = nop;
-      
-      const label = type === 'ISSUE' 
-        ? `${nop !== 'ALL' ? nop + ' • ' : ''}Power PLN BERMASALAH (NOT SAFE / WARNING)` 
-        : `${nop !== 'ALL' ? nop + ' • ' : ''}Power PLN Status SAFE`;
-
-      setupDrillDownView(4, label, (item) => {
-        if (nop !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nop.toUpperCase()) return false;
-        const cap = String(item['Capacity Status'] || '').toUpperCase();
-        return type === 'ISSUE' ? ['NOT SAFE', 'WARNING'].includes(cap) : cap === 'SAFE';
-      });
-    }
-
-    // Battery Drill Down (Modul 6)
-    function drillDownBatt(nop, type) {
-      if (nop !== 'ALL') document.getElementById('filter-nop').value = nop;
-
-      const label = type === 'ISSUE' 
-        ? `${nop !== 'ALL' ? nop + ' • ' : ''}Baterai BERMASALAH (Stolen / No Battery / Need Check)` 
-        : `${nop !== 'ALL' ? nop + ' • ' : ''}Baterai LITHIUM`;
-
-      setupDrillDownView(5, label, (item) => {
-        if (nop !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nop.toUpperCase()) return false;
-        const batt = String(item['Battery Type'] || '').toUpperCase();
-        return type === 'ISSUE' 
-          ? (batt.includes('STOLEN') || batt.includes('NO BATTERY') || batt.includes('NEED CHECK'))
-          : batt.includes('LITHIUM');
-      });
-    }
-
-    // Rectifier Drill Down (Modul 6)
-    function drillDownRect(nop, type) {
-      if (nop !== 'ALL') document.getElementById('filter-nop').value = nop;
-
-      const label = type === 'ISSUE' 
-        ? `${nop !== 'ALL' ? nop + ' • ' : ''}Rectifier BUTUH UPGRADE / CRITICAL` 
-        : `${nop !== 'ALL' ? nop + ' • ' : ''}Rectifier NORMAL`;
-
-      setupDrillDownView(5, label, (item) => {
-        if (nop !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nop.toUpperCase()) return false;
-        const rect = String(item['Rectifier Condition'] || '').toUpperCase();
-        return type === 'ISSUE' 
-          ? (rect.includes('CRITICAL') || rect.includes('UPGRADE'))
-          : rect.includes('NORMAL');
-      });
-    }
-
-    // AC Drill Down (Modul 7)
-    function drillDownAc(nop, type) {
-      if (nop !== 'ALL') document.getElementById('filter-nop').value = nop;
-
-      const label = type === 'ISSUE' 
-        ? `${nop !== 'ALL' ? nop + ' • ' : ''}AC RUSAK / PENDING CHECK` 
-        : `${nop !== 'ALL' ? nop + ' • ' : ''}AC ACTIVE`;
-
-      setupDrillDownView(6, label, (item) => {
-        if (nop !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nop.toUpperCase()) return false;
-        const ac = String(item['Status AC'] || '').toUpperCase();
-        return type === 'ISSUE' 
-          ? (ac.includes('BROKEN') || ac.includes('NEED CHECK'))
-          : ac === 'ACTIVE';
-      });
-    }
-
-    // Genset & Autorate / Warming Up Drill Down (Modul 7)
-    function drillDownGenset(nop, type) {
-      if (nop !== 'ALL') document.getElementById('filter-nop').value = nop;
-
-      let label = `${nop !== 'ALL' ? nop + ' • ' : ''}Genset Active`;
-      if (type === 'AUTORATE_ISSUE') label = `${nop !== 'ALL' ? nop + ' • ' : ''}Genset Autorate BERMASALAH (Broken/Issue)`;
-      if (type === 'AUTORATE_AUTO') label = `${nop !== 'ALL' ? nop + ' • ' : ''}Genset Autorate Normal (Auto)`;
-      if (type === 'WARMING_ISSUE') label = `${nop !== 'ALL' ? nop + ' • ' : ''}Genset Warming Up BERMASALAH (Broken/Issue)`;
-      if (type === 'WARMING_AUTO') label = `${nop !== 'ALL' ? nop + ' • ' : ''}Genset Warming Up Normal (Auto)`;
-
-      setupDrillDownView(6, label, (item) => {
-        if (nop !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nop.toUpperCase()) return false;
-        
-        if (type === 'AUTORATE_ISSUE') {
-          const s = String(item['Current Week Genset Condition Autorate'] || '').toUpperCase();
-          return s && s !== 'AUTO' && s !== '0' && s !== 'NAN' && s !== 'EMPTY';
-        }
-        if (type === 'AUTORATE_AUTO') {
-          return String(item['Current Week Genset Condition Autorate'] || '').toUpperCase() === 'AUTO';
-        }
-        if (type === 'WARMING_ISSUE') {
-          const s = String(item['Current Week Genset Condition Warming Up'] || '').toUpperCase();
-          return s && s !== 'AUTO' && s !== '0' && s !== 'NAN' && s !== 'EMPTY';
-        }
-        if (type === 'WARMING_AUTO') {
-          return String(item['Current Week Genset Condition Warming Up'] || '').toUpperCase() === 'AUTO';
-        }
-
-        // Default all active DG
-        return String(item['DG Status'] || '').toUpperCase() === 'ACTIVE' || String(item['∑ of Genset'] || '') === '1';
-      });
-    }
-
-    // --- MODULE DATA TABLE VIEW ---
     function setModule(index) {
-      isDashboardActive = false;
       currentModuleIndex = index;
+      switchViewMode('modules');
       const mod = MODULES_CONFIG[index];
-
-      document.getElementById('executive-dashboard-view').classList.add('hidden');
-      document.getElementById('module-data-view').classList.remove('hidden');
       document.getElementById('active-modul-title').textContent = mod.title;
-
-      document.querySelectorAll('.modul-nav-btn').forEach(b => {
-        b.className = "modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition";
-      });
-      const btn = document.getElementById(`modul-btn-${index}`);
-      if (btn) {
-        btn.className = "modul-nav-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition bg-blue-50 text-blue-700 border border-blue-200";
-      }
-
       renderTableHeader();
       renderTableData();
     }
@@ -1170,14 +1312,9 @@
     function renderTableHeader() {
       const header = document.getElementById('table-header');
       const mod = MODULES_CONFIG[currentModuleIndex];
-      
       let html = '<tr class="border-b border-slate-200 bg-slate-100 text-slate-600 uppercase tracking-wider text-[10px]">';
-      html += '<th class="py-2.5 px-3 text-center w-12">#</th>';
-      html += '<th class="py-2.5 px-3 text-left">Aksi</th>';
-      
-      mod.columns.forEach(col => {
-        html += `<th class="py-2.5 px-3 text-left">${col.label}</th>`;
-      });
+      html += '<th class="py-2.5 px-3 text-center w-12">#</th><th class="py-2.5 px-3 text-left">Aksi</th>';
+      mod.columns.forEach(col => { html += `<th class="py-2.5 px-3 text-left">${col.label}</th>`; });
       html += '</tr>';
       header.innerHTML = html;
     }
@@ -1185,166 +1322,82 @@
     function renderTableData() {
       const tbody = document.getElementById('table-body');
       const mod = MODULES_CONFIG[currentModuleIndex];
-
       if (filteredData.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="${mod.columns.length + 2}" class="py-12 text-center text-slate-400">
-              <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-              <p class="font-sans font-medium text-slate-600">Tidak ada site yang cocok dengan kriteria filter.</p>
-              <button onclick="clearCustomDrillDown()" class="mt-2 text-xs text-blue-600 hover:underline font-bold">Reset Semua Filter</button>
-            </td>
-          </tr>
-        `;
-        lucide.createIcons();
+        tbody.innerHTML = `<tr><td colspan="${mod.columns.length + 2}" class="py-12 text-center text-slate-400">Tidak ada data</td></tr>`;
         updatePaginationInfo();
         return;
       }
-
       const start = (currentPage - 1) * pageSize;
       const end = Math.min(start + pageSize, filteredData.length);
       const pageRows = filteredData.slice(start, end);
-
       let html = "";
       pageRows.forEach((row, i) => {
         const isVip = String(row['Status VIP'] || '').toUpperCase() === 'VIP';
         html += `<tr class="hover:bg-slate-50 transition border-b border-slate-200">`;
         html += `<td class="py-2 px-3 text-center text-slate-400 font-mono">${start + i + 1}</td>`;
-        
-        // Action Button
-        html += `
-          <td class="py-2 px-3">
-            <button onclick="openDetailModal('${escapeQuotes(row['Site ID'] || '')}')" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-[11px] font-sans font-medium flex items-center gap-1 transition">
-              <i data-lucide="eye" class="w-3 h-3"></i> Detail
-            </button>
-          </td>
-        `;
-
-        // Data Columns with Highlight on Issues
+        html += `<td class="py-2 px-3 flex items-center gap-1.5">
+          <button onclick="openDetailModal('${escapeQuotes(row['Site ID'] || '')}')" class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded text-[11px] font-sans font-medium">Detail</button>
+          <button onclick="loadSiteToSimulator('${escapeQuotes(row['Site ID'] || '')}'); switchViewMode('simulator');" class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[11px] font-sans font-medium">Sim</button>
+        </td>`;
         mod.columns.forEach(col => {
           let val = row[col.key] !== undefined && row[col.key] !== null ? String(row[col.key]) : "-";
-          
           if (col.key === 'Site ID') {
-            html += `<td class="py-2 px-3 font-bold ${isVip ? 'text-amber-700' : 'text-blue-700'}">${val}</td>`;
-          } else if (col.key === 'Status VIP') {
-            html += isVip 
-              ? `<td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">VIP</span></td>`
-              : `<td class="py-2 px-3 text-slate-400">-</td>`;
-          } else if (col.key === 'Capacity Status' && ['NOT SAFE', 'WARNING'].includes(val.toUpperCase())) {
-            html += `<td class="py-2 px-3"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold border border-rose-200 rounded">${val}</span></td>`;
-          } else if (col.key === 'Battery Type' && (val.toUpperCase().includes('STOLEN') || val.toUpperCase().includes('NO BATTERY'))) {
-            html += `<td class="py-2 px-3"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold border border-rose-200 rounded">${val}</span></td>`;
-          } else if (col.key === 'Status AC' && val.toUpperCase().includes('BROKEN')) {
-            html += `<td class="py-2 px-3"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold border border-rose-200 rounded">${val}</span></td>`;
+            html += `<td class="py-2 px-3 font-bold ${isVip ? 'text-amber-700' : 'text-rose-700'}">${val}</td>`;
           } else {
             html += `<td class="py-2 px-3 text-slate-700">${val}</td>`;
           }
         });
-
         html += `</tr>`;
       });
-
       tbody.innerHTML = html;
-      lucide.createIcons();
       updatePaginationInfo();
     }
 
-    // --- FILTERS & SEARCH ---
     function applyFilters() {
       const q = (document.getElementById('global-search-input').value || '').toLowerCase().trim();
       const vipFilter = document.getElementById('filter-vip').value;
-      const tpFilter = document.getElementById('filter-tp').value;
       const nopFilter = document.getElementById('filter-nop').value;
 
       filteredData = rawSitesData.filter(item => {
-        // Apply drill-down predicate first if active
-        if (customFilterPredicate && !customFilterPredicate(item)) {
-          return false;
-        }
-
         if (q) {
           const match = Object.values(item).some(val => String(val).toLowerCase().includes(q));
           if (!match) return false;
         }
-
         if (vipFilter === 'VIP' && String(item['Status VIP'] || '').toUpperCase() !== 'VIP') return false;
         if (vipFilter === 'NON-VIP' && String(item['Status VIP'] || '').toUpperCase() === 'VIP') return false;
-        if (tpFilter !== 'ALL' && String(item['TP'] || '') !== tpFilter) return false;
         if (nopFilter !== 'ALL' && String(item['NOP'] || '').toUpperCase() !== nopFilter) return false;
-
         return true;
       });
 
       currentPage = 1;
-      if (!isDashboardActive) {
-        renderTableData();
-      }
-      updateStats();
+      if (currentActiveView === 'modules') renderTableData();
     }
 
     function populateFilters() {
-      const tpSet = new Set();
-      rawSitesData.forEach(s => {
-        if (s['TP']) tpSet.add(s['TP']);
-      });
-
-      const select = document.getElementById('filter-tp');
-      select.innerHTML = '<option value="ALL">Semua Tower Provider (TP)</option>';
-      Array.from(tpSet).sort().forEach(tp => {
-        select.innerHTML += `<option value="${tp}">${tp}</option>`;
-      });
+      // filters populated
     }
 
-    function updateStats() {
-      document.getElementById('stat-total').textContent = rawSitesData.length.toLocaleString();
-      const vipCount = rawSitesData.filter(r => String(r['Status VIP'] || '').toUpperCase() === 'VIP').length;
-      document.getElementById('stat-vip').textContent = vipCount.toLocaleString();
-      document.getElementById('stat-filtered').textContent = filteredData.length.toLocaleString();
-    }
-
-    // --- PAGINATION ---
     function updatePaginationInfo() {
       const start = filteredData.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
       const end = Math.min(currentPage * pageSize, filteredData.length);
       document.getElementById('pagination-info').textContent = `Menampilkan ${start} - ${end} dari ${filteredData.length.toLocaleString()} site`;
       document.getElementById('current-page-num').textContent = currentPage;
-
       document.getElementById('prev-btn').disabled = currentPage <= 1;
       document.getElementById('next-btn').disabled = end >= filteredData.length;
     }
 
-    function prevPage() {
-      if (currentPage > 1) {
-        currentPage--;
-        renderTableData();
-      }
-    }
+    function prevPage() { if (currentPage > 1) { currentPage--; renderTableData(); } }
+    function nextPage() { if (currentPage * pageSize < filteredData.length) { currentPage++; renderTableData(); } }
+    function changePageSize() { pageSize = parseInt(document.getElementById('page-size-select').value); currentPage = 1; renderTableData(); }
 
-    function nextPage() {
-      if (currentPage * pageSize < filteredData.length) {
-        currentPage++;
-        renderTableData();
-      }
-    }
-
-    function changePageSize() {
-      pageSize = parseInt(document.getElementById('page-size-select').value);
-      currentPage = 1;
-      renderTableData();
-    }
-
-    // --- EXCEL UPLOAD SYNC ---
     function handleExcelUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(evt) {
         const data = new Uint8Array(evt.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         if (rawRows.length > 2) {
           const headers = rawRows[1];
@@ -1354,103 +1407,59 @@
             headers.forEach((h, colIdx) => {
               if (h) rowObj[String(h).trim()] = rawRows[i][colIdx] !== undefined ? rawRows[i][colIdx] : "";
             });
-            if (rowObj['Site ID']) {
-              rows.push(rowObj);
-            }
+            if (rowObj['Site ID']) rows.push(rowObj);
           }
-
           rawSitesData = rows;
-          populateFilters();
           applyFilters();
           calculateDashboardMetrics();
-          alert(`Berhasil memuat ${rows.length} Site dari Excel!`);
-
-          if (realtimeDb) {
-            if (confirm("Kirim dan sinkronkan seluruh data ini ke Firebase Realtime Database?")) {
-              const sitesRef = realtimeDb.ref('sites_regional12');
-              sitesRef.set(rows);
-              alert("Data berhasil tersinkronisasi ke Firebase!");
-            }
+          alert(`Berhasil membaca ${rows.length} Site!`);
+          if (realtimeDb && confirm("Sinkronkan seluruh data ini ke Firebase Realtime Database?")) {
+            realtimeDb.ref('sites_regional12').set(rows);
+            alert("Data berhasil tersinkronisasi ke Firebase!");
           }
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
-    function exportFilteredData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(filteredData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `SME_DATA_EXPORT_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    // --- MODAL DOSSIER ---
     function openDetailModal(siteId) {
       const site = rawSitesData.find(s => String(s['Site ID']).trim() === siteId.trim());
       if (!site) return;
       activeModalSite = site;
-
       document.getElementById('modal-site-id').textContent = site['Site ID'] || '-';
-      document.getElementById('modal-site-name').textContent = `${site['Site Name'] || '-'} • ${site['Village'] || ''}, ${site['Subdistrict'] || ''}, ${site['City'] || ''}, ${site['Province'] || ''}`;
+      document.getElementById('modal-site-name').textContent = `${site['Site Name'] || '-'} • ${site['Village'] || ''}, ${site['City'] || ''}`;
       document.getElementById('modal-site-class').textContent = `Class: ${site['Site Class'] || '-'}`;
-
       const isVip = String(site['Status VIP'] || '').toUpperCase() === 'VIP';
       document.getElementById('modal-site-vip').style.display = isVip ? 'inline-block' : 'none';
-
-      if (site['Lat'] && site['Long']) {
-        document.getElementById('modal-gmaps-link').href = `https://www.google.com/maps?q=${site['Lat']},${site['Long']}`;
-        document.getElementById('modal-gmaps-link').style.display = 'flex';
-      } else {
-        document.getElementById('modal-gmaps-link').style.display = 'none';
-      }
-
       switchModalTab(0);
       document.getElementById('detail-modal').classList.remove('hidden');
       lucide.createIcons();
     }
 
-    function closeDetailModal() {
-      document.getElementById('detail-modal').classList.add('hidden');
-      activeModalSite = null;
-    }
+    function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); activeModalSite = null; }
 
     function switchModalTab(tabIndex) {
       for (let i = 0; i < 7; i++) {
         const btn = document.getElementById(`modal-tab-${i}`);
         if (i === tabIndex) {
-          btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold";
+          btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg bg-rose-600 text-white font-semibold";
         } else {
           btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 font-medium";
         }
       }
-
       const mod = MODULES_CONFIG[tabIndex];
       const container = document.getElementById('modal-detail-content');
       if (!activeModalSite) return;
-
       let html = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
       mod.columns.forEach(col => {
-        const val = activeModalSite[col.key] !== undefined && activeModalSite[col.key] !== null && activeModalSite[col.key] !== "" 
-          ? activeModalSite[col.key] 
-          : '<span class="text-slate-400 italic">kosong</span>';
-        
-        html += `
-          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-            <span class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1">${col.label}</span>
-            <div class="font-mono text-xs text-slate-800 break-words font-medium">${val}</div>
-          </div>
-        `;
+        const val = activeModalSite[col.key] !== undefined && activeModalSite[col.key] !== null && activeModalSite[col.key] !== "" ? activeModalSite[col.key] : '<span class="text-slate-400 italic">kosong</span>';
+        html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded-xl"><span class="text-[10px] uppercase font-semibold text-slate-500 block mb-1">${col.label}</span><div class="font-mono text-xs text-slate-800 break-words font-medium">${val}</div></div>`;
       });
       html += `</div>`;
       container.innerHTML = html;
     }
 
-    function escapeQuotes(str) {
-      return String(str).replace(/'/g, "\'");
-    }
+    function escapeQuotes(str) { return String(str).replace(/'/g, "\'"); }
   </script>
 </body>
 </html>
