@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SME Telecom Power Engineering & Master Data Portal</title>
+  <title>SME Telecom Power Engineering & Periodic Tracking Portal</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -16,30 +16,27 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <style>
-    /* Custom Clean Light Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f8fafc; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    .badge-vip { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
     .card-shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05); }
-    .card-shadow-hover:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07); }
     .status-banner-danger { background: linear-gradient(135deg, #e11d48, #be123c); }
     .status-banner-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .status-banner-safe { background: linear-gradient(135deg, #10b981, #059669); }
   </style>
 </head>
-<body class="bg-slate-100/70 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-100/70 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-600 selection:text-white">
 
   <!-- ================= 1. JENDELA AWAL / LOGIN SCREEN ================= -->
   <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
     <div class="relative w-full max-w-md bg-white border border-slate-200 p-8 rounded-3xl shadow-2xl z-10">
       <div class="text-center mb-6">
         <div class="w-14 h-14 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
-          <i data-lucide="zap" class="w-7 h-7 text-rose-600"></i>
+          <i data-lucide="activity" class="w-7 h-7 text-rose-600"></i>
         </div>
-        <h1 class="text-2xl font-black tracking-tight text-slate-900">SME Power & Master Portal</h1>
-        <p class="text-xs text-slate-500 mt-1">Simulasi Kontrak PLN, Rekayasa Daya & 114 Parameter Teknis</p>
+        <h1 class="text-2xl font-black tracking-tight text-slate-900">SME Master & Tracking</h1>
+        <p class="text-xs text-slate-500 mt-1">Daily • Weekly • Monthly Compile & Engineering Portal</p>
       </div>
 
       <div class="mb-4 flex justify-end">
@@ -69,14 +66,14 @@
 
         <div class="pt-2 space-y-2">
           <button type="button" onclick="bypassDemoLogin()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-xs transition shadow-md shadow-rose-500/20 flex items-center justify-center gap-2">
-            <span>Buka Dashboard & Simulator</span>
+            <span>Buka Dashboard & Tracking Hub</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
         </div>
       </form>
       
       <div class="mt-6 pt-4 border-t border-slate-100 text-center">
-        <p class="text-[11px] text-slate-400">Total 4.307 Site & 114 Parameter • Realtime Interactive Engineering</p>
+        <p class="text-[11px] text-slate-400">Total 4.307 Site • Realtime Tracking & Auto-Compile Enabled</p>
       </div>
     </div>
   </div>
@@ -114,9 +111,9 @@
             <span class="font-black text-base tracking-tight text-slate-900">
               SME MASTER DATA
             </span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">Power Engineering</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">Tracking Hub</span>
           </div>
-          <p id="active-modul-title" class="text-[11px] text-slate-500 font-medium">Profil & Kontrak Site R12 • Simulasi Daya PLN</p>
+          <p id="active-modul-title" class="text-[11px] text-slate-500 font-medium">Tracking Harian • Mingguan • Rekap Bulanan</p>
         </div>
       </div>
 
@@ -127,13 +124,19 @@
           <span id="firebase-status-text">Realtime Connected</span>
         </div>
 
-        <button onclick="switchViewMode('simulator')" id="btn-view-sim" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+        <!-- 4 MAIN WORKSPACE TABS -->
+        <button onclick="switchViewMode('tracking')" id="btn-view-track" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>Tracking D/W/M</span>
+        </button>
+
+        <button onclick="switchViewMode('simulator')" id="btn-view-sim" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition">
           <i data-lucide="sliders" class="w-3.5 h-3.5 text-rose-600"></i>
           <span>Simulasi Daya PLN</span>
         </button>
 
         <button onclick="switchViewMode('dashboard')" id="btn-view-dash" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-blue-600"></i>
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-amber-600"></i>
           <span>Dashboard NOP</span>
         </button>
 
@@ -155,13 +158,13 @@
     </header>
 
     <div class="flex flex-1 relative overflow-hidden">
-      <!-- ================= 3. TRAY SIDEBAR (OFF-CANVAS TRAY SYSTEM) ================= -->
+      <!-- ================= 3. TRAY SIDEBAR (OFF-CANVAS) ================= -->
       <div id="tray-backdrop" onclick="toggleSidebarTray()" class="hidden fixed inset-0 z-30 bg-slate-900/30 backdrop-blur-xs transition-opacity"></div>
 
       <aside id="sidebar-tray" class="fixed top-16 bottom-0 left-0 w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-40 shadow-xl -translate-x-full select-none">
         <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-rose-600"></i> Menu Navigasi
+            <i data-lucide="layers" class="w-4 h-4 text-blue-600"></i> Menu Navigasi
           </span>
           <button onclick="toggleSidebarTray()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-500">
             <i data-lucide="x" class="w-4 h-4"></i>
@@ -169,22 +172,30 @@
         </div>
 
         <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
+          <!-- Tracking Hub -->
+          <button onclick="switchViewMode('tracking'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition bg-blue-50 text-blue-700 border border-blue-200">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="calendar-check" class="w-4 h-4 shrink-0 text-blue-600"></i>
+              <span class="truncate">Tracking Daily / Weekly / Monthly</span>
+            </div>
+            <span class="text-[10px] bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded font-bold">BARU</span>
+          </button>
+
           <!-- Power Simulator Tab -->
-          <button onclick="switchViewMode('simulator'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition bg-rose-50 text-rose-700 border border-rose-200">
+          <button onclick="switchViewMode('simulator'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
             <div class="flex items-center gap-2.5">
               <i data-lucide="sliders" class="w-4 h-4 shrink-0 text-rose-600"></i>
               <span class="truncate">Profil & Simulasi Kontrak PLN</span>
             </div>
-            <span class="text-[10px] bg-rose-200 text-rose-800 px-1.5 py-0.5 rounded font-bold">UTAMA</span>
           </button>
 
           <!-- Executive Dashboard Tab -->
-          <button onclick="switchViewMode('dashboard'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+          <button onclick="switchViewMode('dashboard'); toggleSidebarTray();" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
             <div class="flex items-center gap-2.5">
-              <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 text-blue-600"></i>
+              <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 text-amber-600"></i>
               <span class="truncate">Ringkasan & Kondisi NOP</span>
             </div>
-            <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">KONDISI</span>
+            <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">KONDISI</span>
           </button>
 
           <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -224,46 +235,242 @@
 
         <div class="p-3 m-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
           <div class="flex justify-between mb-1"><span>Total Database:</span><span id="stat-total" class="font-bold text-slate-900">4,307</span></div>
-          <div class="flex justify-between"><span>Realtime Loaded:</span><span id="stat-loaded" class="font-bold text-rose-600">4,307 Site</span></div>
+          <div class="flex justify-between"><span>Tracking Items:</span><span id="stat-track-count" class="font-bold text-blue-600">0 Log</span></div>
         </div>
       </aside>
 
       <!-- ================= 4. MAIN WORKSPACE ================= -->
       <main class="flex-1 flex flex-col min-w-0 bg-slate-100/60 overflow-hidden">
         
-        <!-- ================= VIEW 1: POWER ENGINEERING & MULTI-SKEMA SIMULATOR (SESUAI GAMBAR) ================= -->
-        <div id="view-simulator" class="flex-1 overflow-y-auto p-4 sm:p-6">
+        <!-- ================= VIEW 1: TRACKING DAILY / WEEKLY / COMPILE MONTHLY (BARU) ================= -->
+        <div id="view-tracking" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          
+          <!-- Tracking Header & Compile Metric Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Card 1: Daily Tracking Active -->
+            <div class="bg-white border border-slate-200 p-5 rounded-2xl card-shadow">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Daily Log Progress</span>
+                <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></span>
+              </div>
+              <div id="track-daily-open-count" class="text-3xl font-black text-blue-600">0</div>
+              <div class="text-[11px] text-slate-500 mt-1 font-medium">
+                <span id="track-daily-today-count" class="text-emerald-600 font-bold">0</span> update hari ini
+              </div>
+            </div>
+
+            <!-- Card 2: Weekly Compilation -->
+            <div class="bg-white border border-slate-200 p-5 rounded-2xl card-shadow">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Weekly Resolution</span>
+                <span class="p-1.5 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="calendar" class="w-4 h-4"></i></span>
+              </div>
+              <div id="track-weekly-done-count" class="text-3xl font-black text-purple-600">0</div>
+              <div class="text-[11px] text-slate-500 mt-1 font-medium">
+                Issue selesai minggu ini
+              </div>
+            </div>
+
+            <!-- Card 3: Monthly SLA Rate -->
+            <div class="bg-white border border-slate-200 p-5 rounded-2xl card-shadow">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Monthly Compile Rate</span>
+                <span class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
+              </div>
+              <div id="track-monthly-rate" class="text-3xl font-black text-emerald-600">100%</div>
+              <div class="text-[11px] text-slate-500 mt-1 font-medium">
+                Target Improvement R12
+              </div>
+            </div>
+
+            <!-- Card 4: Action / Export Report -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-2xl shadow-lg flex flex-col justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Export Rekap Kompilasi</span>
+                <h4 class="font-bold text-sm text-white mt-1">Laporan Bulanan & Mingguan</h4>
+              </div>
+              <div class="flex items-center gap-2 pt-3">
+                <button onclick="exportTrackingReport('monthly')" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 transition">
+                  <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Export Excel
+                </button>
+                <button onclick="exportTrackingReport('json')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl text-[11px] transition">
+                  JSON
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Tracking Sections: 1. Input Daily Log | 2. Weekly / Monthly Rollup -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            
+            <!-- FORM INPUT DAILY TRACKING (KIRI) -->
+            <div class="lg:col-span-5 bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                  <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i>
+                  Input / Update Tracking Harian (Daily)
+                </h3>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Realtime Sync</span>
+              </div>
+
+              <form id="daily-tracking-form" onsubmit="handleSaveTrackingLog(event)" class="space-y-3.5 text-xs">
+                <!-- Search Site Auto-fill -->
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Site ID / Nama (Auto-Search)</label>
+                  <div class="relative">
+                    <input type="text" id="track-input-search" oninput="handleTrackSiteSearch(this.value)" required placeholder="Cari Site ID / Nama..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition" />
+                    <div id="track-search-results" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-50 divide-y divide-slate-100 text-xs"></div>
+                  </div>
+                </div>
+
+                <!-- Site ID & NOP Auto-populated -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Site ID</label>
+                    <input type="text" id="track-site-id" readonly required class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-rose-600" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NOP / Wilayah</label>
+                    <input type="text" id="track-nop" readonly required class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700" />
+                  </div>
+                </div>
+
+                <!-- Kategori Perangkat & Tanggal Target -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kategori Masalah / Perangkat</label>
+                    <select id="track-category" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                      <option value="POWER_PLN">⚡ Power PLN (Unsafe/Overload)</option>
+                      <option value="BATTERY">🔋 Baterai (Stolen/No Battery/Check)</option>
+                      <option value="RECTIFIER">🔌 Rectifier (Upgrade/Critical)</option>
+                      <option value="AIR_COND">❄️ Cooling / AC (Broken/Need Check)</option>
+                      <option value="GENSET">⛽ Genset / DG (Autorate/Warming Issue)</option>
+                      <option value="TRANSPORT">🌐 Transport / FO Link</option>
+                      <option value="SITE_ACCESS">🔑 Akses & TO / PIC</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Periode / Minggu (Week)</label>
+                    <select id="track-period-week" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                      <option value="W1">Week 1</option>
+                      <option value="W2">Week 2</option>
+                      <option value="W3">Week 3</option>
+                      <option value="W4" selected>Week 4</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Status Progress & PIC -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status Progress</label>
+                    <select id="track-status" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                      <option value="OPEN">🔴 OPEN (Pending)</option>
+                      <option value="IN_PROGRESS">🟡 IN PROGRESS (Sedang Dikerjakan)</option>
+                      <option value="CLOSED">🟢 CLOSED (Selesai/Normal)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">PIC Pelaksana</label>
+                    <input type="text" id="track-pic" required placeholder="Nama PIC / Mitra..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+
+                <!-- Plan Action & Remark -->
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Plan Action & Detail Tindak Lanjut</label>
+                  <textarea id="track-plan-action" rows="2" required placeholder="Contoh: Rebalancing fasa T pada ACPDB, penambahan baterai lithium 100Ah, perbaikan controller genset..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="pt-1">
+                  <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Simpan & Sinkronkan Realtime</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- TABEL REKAP TRACKING HARIAN, MINGGUAN & BULANAN (KANAN) -->
+            <div class="lg:col-span-7 space-y-5">
+              
+              <!-- Tab Filter Periode Tracking -->
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div>
+                    <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                      <i data-lucide="list-checks" class="w-4 h-4 text-emerald-600"></i>
+                      Daftar Log Tracking & Rekap Kompilasi
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Pantau histori perbaikan harian dan kompilasi per minggu/bulan</p>
+                  </div>
+
+                  <!-- Period Switcher Buttons -->
+                  <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                    <button onclick="setTrackingFilter('ALL')" id="tbtn-all" class="px-3 py-1 bg-white text-blue-700 rounded-lg shadow-xs">Semua</button>
+                    <button onclick="setTrackingFilter('DAILY')" id="tbtn-daily" class="px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg">Hari Ini</button>
+                    <button onclick="setTrackingFilter('WEEKLY')" id="tbtn-weekly" class="px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg">Weekly (W1-W4)</button>
+                    <button onclick="setTrackingFilter('MONTHLY')" id="tbtn-monthly" class="px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg">Monthly Compile</button>
+                  </div>
+                </div>
+
+                <!-- Live Log Table -->
+                <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold tracking-wider sticky top-0 z-10 border-b border-slate-200">
+                      <tr>
+                        <th class="py-2.5 px-3">Waktu / Tgl</th>
+                        <th class="py-2.5 px-3">Site ID / NOP</th>
+                        <th class="py-2.5 px-3">Kategori</th>
+                        <th class="py-2.5 px-3">Plan Action & Remarks</th>
+                        <th class="py-2.5 px-3">PIC</th>
+                        <th class="py-2.5 px-3 text-center">Status</th>
+                        <th class="py-2.5 px-3 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tracking-logs-tbody" class="divide-y divide-slate-100 text-[11px]">
+                      <!-- Generated Dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] flex items-center justify-between text-slate-500">
+                  <span id="track-table-count">Menampilkan 0 log tracking</span>
+                  <span class="text-[10px]">Tersimpan aman di Firebase Realtime node <code>/activity_tracking</code></span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= VIEW 2: POWER SIMULATOR (SESUAI DESAIN GAMBAR) ================= -->
+        <div id="view-simulator" class="hidden flex-1 overflow-y-auto p-4 sm:p-6">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-[1600px] mx-auto items-start">
             
-            <!-- ================= KOLOM KIRI (PROFIL & ACPDB TERUKUR) ================= -->
+            <!-- KOLOM KIRI (PROFIL & ACPDB) -->
             <div class="lg:col-span-4 space-y-5">
-              
-              <!-- Card: Profil & Kontrak Site R12 -->
               <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
                     <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-black text-xs border border-rose-200">A</span>
                     Profil & Kontrak Site R12
                   </h3>
-                  <span id="sim-badge-site-count" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    ● 4.307 Sites
-                  </span>
+                  <span id="sim-badge-site-count" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">● 4.307 Sites</span>
                 </div>
 
                 <div class="space-y-3.5">
-                  <!-- Search Auto-fill -->
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-1">Pilih / Cari Site (Auto-Fill):</label>
                     <div class="relative">
                       <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
-                      <input type="text" id="sim-search-input" oninput="handleSimSiteSearch(this.value)" placeholder="Ketik Site ID / Nama (cth: BKS454, BKS002...)" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500 focus:bg-white transition font-medium" />
-                      <!-- Dropdown Autocomplete Results -->
-                      <div id="sim-search-results" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto z-50 divide-y divide-slate-100 text-xs">
-                      </div>
+                      <input type="text" id="sim-search-input" oninput="handleSimSiteSearch(this.value)" placeholder="Ketik Site ID / Nama..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-rose-500 font-medium" />
+                      <div id="sim-search-results" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-56 overflow-y-auto z-50 divide-y divide-slate-100 text-xs"></div>
                     </div>
                   </div>
 
-                  <!-- Site ID & NOP -->
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Site ID</label>
@@ -275,17 +482,15 @@
                     </div>
                   </div>
 
-                  <!-- Site Name -->
                   <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Site Name</label>
                     <input type="text" id="sim-site-name" value="MM2100" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800" />
                   </div>
 
-                  <!-- Kapasitas Kontrak & Rating MCB -->
                   <div class="grid grid-cols-12 gap-3">
                     <div class="col-span-8">
                       <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kapasitas Kontrak</label>
-                      <select id="sim-contract-select" onchange="handleContractChange()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-rose-500">
+                      <select id="sim-contract-select" onchange="handleContractChange()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800">
                         <option value="7700|1|35">7.7 kVA (1-Ph / 35A)</option>
                         <option value="11000|3|16">11.0 kVA (3-Ph / 3x16A)</option>
                         <option value="13200|3|20">13.2 kVA (3-Ph / 3x20A)</option>
@@ -298,16 +503,13 @@
                     </div>
                     <div class="col-span-4">
                       <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rating MCB</label>
-                      <div class="relative">
-                        <input type="number" id="sim-mcb-rating" value="50" oninput="recalculateEngineering()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-rose-500" />
-                        <span class="text-[10px] text-slate-400 absolute right-2.5 top-2.5 font-medium">Ampere</span>
-                      </div>
+                      <input type="number" id="sim-mcb-rating" value="50" oninput="recalculateEngineering()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800" />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card: ACPDB Terukur (Sensor NetEco) -->
+              <!-- ACPDB Terukur -->
               <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
@@ -324,49 +526,24 @@
                     <span class="col-span-4 text-center">Arus Beban (A)</span>
                   </div>
 
-                  <!-- Phase R -->
                   <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                      <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                      Phase R (L1)
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.1" id="sim-volt-r" value="237.1" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.01" id="sim-amp-r" value="3.43" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
-                    </div>
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Phase R (L1)</div>
+                    <div class="col-span-4"><input type="number" step="0.1" id="sim-volt-r" value="237.1" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" /></div>
+                    <div class="col-span-4"><input type="number" step="0.01" id="sim-amp-r" value="3.43" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" /></div>
                   </div>
 
-                  <!-- Phase S -->
                   <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                      <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                      Phase S (L2)
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.1" id="sim-volt-s" value="232.3" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.01" id="sim-amp-s" value="4.48" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
-                    </div>
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Phase S (L2)</div>
+                    <div class="col-span-4"><input type="number" step="0.1" id="sim-volt-s" value="232.3" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" /></div>
+                    <div class="col-span-4"><input type="number" step="0.01" id="sim-amp-s" value="4.48" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" /></div>
                   </div>
 
-                  <!-- Phase T -->
                   <div class="grid grid-cols-12 gap-2 items-center bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                      <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                      Phase T (L3)
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.1" id="sim-volt-t" value="221.8" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" />
-                    </div>
-                    <div class="col-span-4">
-                      <input type="number" step="0.01" id="sim-amp-t" value="17.18" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" />
-                    </div>
+                    <div class="col-span-4 flex items-center gap-1.5 text-xs font-bold text-slate-700"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Phase T (L3)</div>
+                    <div class="col-span-4"><input type="number" step="0.1" id="sim-volt-t" value="221.8" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800" /></div>
+                    <div class="col-span-4"><input type="number" step="0.01" id="sim-amp-t" value="17.18" oninput="recalculateEngineering()" class="w-full text-center px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-rose-600" /></div>
                   </div>
 
-                  <!-- PF & Active Power -->
                   <div class="grid grid-cols-2 gap-3 pt-1">
                     <div>
                       <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Power Factor (PF)</label>
@@ -379,36 +556,27 @@
                   </div>
                 </div>
               </div>
-
             </div>
 
-            <!-- ================= KOLOM TENGAH (KATEGORI STATUS, METRICS & PARAMETER REKAYASA) ================= -->
+            <!-- KOLOM TENGAH (METRICS & REKAYASA) -->
             <div class="lg:col-span-4 space-y-5">
-              
-              <!-- Status Site Banner Header (Red / Yellow / Green gradient) -->
-              <div id="sim-status-card" class="status-banner-danger text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
-                <div class="relative z-10 flex items-start justify-between">
+              <div id="sim-status-card" class="status-banner-danger text-white rounded-2xl p-5 shadow-lg">
+                <div class="flex items-start justify-between">
                   <div>
                     <span class="text-[10px] font-extrabold uppercase tracking-wider opacity-90 block mb-1">KATEGORI STATUS SITE</span>
                     <h2 id="sim-status-title" class="text-xl font-black tracking-tight">NEED UPGRADE DAYA</h2>
-                    <p id="sim-status-desc" class="text-xs opacity-90 font-medium mt-0.5">Utilisasi Beban Tinggi (> 75.0% atau Trip Risk)</p>
+                    <p id="sim-status-desc" class="text-xs opacity-90 font-medium mt-0.5">Utilisasi Beban Kritis</p>
                   </div>
-                  <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/30">
-                    <i data-lucide="trending-up" id="sim-status-icon" class="w-5 h-5 text-white"></i>
-                  </div>
+                  <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center border border-white/30"><i data-lucide="trending-up" class="w-5 h-5 text-white"></i></div>
                 </div>
               </div>
 
-              <!-- Two Key Metric Sub-Cards -->
               <div class="grid grid-cols-2 gap-3.5">
-                <!-- Total Beban -->
                 <div class="bg-white border border-slate-200/90 rounded-2xl p-4 card-shadow">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">TOTAL BEBAN</span>
                   <div id="sim-total-beban-kva" class="text-2xl font-black text-slate-900">5.66 <span class="text-sm font-bold text-slate-500">kVA</span></div>
                   <div class="text-[11px] text-slate-500 font-medium mt-0.5">PLN: <span id="sim-util-pln-percent" class="font-bold text-slate-800">17.2%</span></div>
                 </div>
-
-                <!-- Fasa Kritis -->
                 <div class="bg-white border border-slate-200/90 rounded-2xl p-4 card-shadow">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">FASA KRITIS</span>
                   <div id="sim-fasa-kritis-amp" class="text-2xl font-black text-rose-600">17.18 <span class="text-sm font-bold text-rose-400">A</span></div>
@@ -416,127 +584,55 @@
                 </div>
               </div>
 
-              <!-- Card: Parameter Rekayasa -->
               <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-3">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
-                    <i data-lucide="calculator" class="w-4 h-4 text-blue-600"></i>
-                    Parameter Rekayasa
-                  </h3>
+                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2"><i data-lucide="calculator" class="w-4 h-4 text-blue-600"></i>Parameter Rekayasa</h3>
                   <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Formula Elektrikal</span>
                 </div>
-
                 <div class="space-y-2.5 text-xs">
-                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Tegangan Rata-Rata (V_avg)</span>
-                    <div class="font-mono text-right"><span id="sim-v-avg" class="font-bold text-slate-900">230.4 V</span> <span class="text-[10px] text-slate-400">Volt AC</span></div>
-                  </div>
-
-                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Arus Rata-Rata per Fasa (I_avg)</span>
-                    <div class="font-mono text-right"><span id="sim-i-avg" class="font-bold text-slate-900">8.36 A</span> <span class="text-[10px] text-slate-400">Ampere / Ph</span></div>
-                  </div>
-
-                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Unbalance Beban Antarfasa</span>
-                    <div class="font-mono text-right"><span id="sim-unbalance" class="font-bold text-amber-600">105.5%</span> <span class="text-[10px] text-slate-400">Normal &lt; 20%</span></div>
-                  </div>
-
-                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Daya Aktif Nyata (P_total)</span>
-                    <div class="font-mono text-right"><span id="sim-p-total" class="font-bold text-slate-900">5.10 kW</span> <span class="text-[10px] text-slate-400">kVA × PF</span></div>
-                  </div>
-
-                  <div class="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Sisa Margin Arus MCB</span>
-                    <div class="font-mono text-right"><span id="sim-mcb-margin" class="font-bold text-emerald-600">32.82 A</span> <span class="text-[10px] text-slate-400">Ampere Sisa</span></div>
-                  </div>
-
-                  <div class="flex items-center justify-between py-1">
-                    <span class="text-slate-500">Sisa Margin Daya PLN</span>
-                    <div class="font-mono text-right"><span id="sim-pln-margin" class="font-bold text-emerald-600">27.34 kVA</span> <span class="text-[10px] text-slate-400">kVA Sisa</span></div>
-                  </div>
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50"><span class="text-slate-500">Tegangan Rata-Rata (V_avg)</span><span id="sim-v-avg" class="font-bold font-mono text-slate-900">230.4 V</span></div>
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50"><span class="text-slate-500">Arus Rata-Rata per Fasa (I_avg)</span><span id="sim-i-avg" class="font-bold font-mono text-slate-900">8.36 A</span></div>
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50"><span class="text-slate-500">Unbalance Beban Antarfasa</span><span id="sim-unbalance" class="font-bold font-mono text-amber-600">105.5%</span></div>
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50"><span class="text-slate-500">Daya Aktif Nyata (P_total)</span><span id="sim-p-total" class="font-bold font-mono text-slate-900">5.10 kW</span></div>
+                  <div class="flex items-center justify-between py-1 border-b border-slate-50"><span class="text-slate-500">Sisa Margin Arus MCB</span><span id="sim-mcb-margin" class="font-bold font-mono text-emerald-600">32.82 A</span></div>
+                  <div class="flex items-center justify-between py-1"><span class="text-slate-500">Sisa Margin Daya PLN</span><span id="sim-pln-margin" class="font-bold font-mono text-emerald-600">27.34 kVA</span></div>
                 </div>
-
-                <!-- Box Rekomendasi Tindak Lanjut -->
-                <div id="sim-rekomendasi-box" class="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl text-xs space-y-1 mt-2">
-                  <div class="font-bold text-rose-800 flex items-center gap-1.5">
-                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
-                    <span>REKOMENDASI TINDAK LANJUT:</span>
-                  </div>
-                  <p id="sim-rekomendasi-text" class="text-rose-900 leading-relaxed text-[11px]">
-                    Kapasitas daya mencukupi, namun terjadi unbalance beban fasa tinggi (105.5%). Lakukan rebalancing beban Rectifier / AC agar fasa T tidak overload.
-                  </p>
+                <div id="sim-rekomendasi-box" class="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs space-y-1 mt-2">
+                  <div class="font-bold text-rose-800 flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600"></i><span>REKOMENDASI TINDAK LANJUT:</span></div>
+                  <p id="sim-rekomendasi-text" class="text-rose-900 leading-relaxed text-[11px]"></p>
                 </div>
               </div>
-
             </div>
 
-            <!-- ================= KOLOM KANAN (SIMULASI MULTI-SKEMA DAYA KONTRAK PLN) ================= -->
+            <!-- KOLOM KANAN (SIMULASI SKEMA) -->
             <div class="lg:col-span-4 space-y-5">
-              
               <div class="bg-white border border-slate-200/90 rounded-2xl p-5 card-shadow space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div>
-                    <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
-                      <i data-lucide="split" class="w-4 h-4 text-purple-600"></i>
-                      Simulasi Multi-Skema Daya Kontrak PLN
-                    </h3>
-                    <p class="text-[11px] text-slate-400 mt-0.5">Proyeksi utilisasi beban pada variasi skema daya PLN 3-Phase standard.</p>
-                  </div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">Analisis Kapasitas</span>
+                  <h3 class="font-black text-sm text-slate-800 flex items-center gap-2"><i data-lucide="split" class="w-4 h-4 text-purple-600"></i>Simulasi Multi-Skema PLN</h3>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700">Analisis</span>
                 </div>
-
-                <!-- Simulation Matrix Table -->
                 <div class="overflow-x-auto">
                   <table class="w-full text-left text-xs border-collapse">
                     <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold tracking-wider border-b border-slate-100">
                       <tr>
-                        <th class="py-2.5 px-2">SKEMA DAYA PLN</th>
-                        <th class="py-2.5 px-2 text-center">KAPASITAS</th>
-                        <th class="py-2.5 px-2 text-center">PREDIKSI UTILISASI</th>
-                        <th class="py-2.5 px-2 text-center">UTILISASI MCB</th>
-                        <th class="py-2.5 px-2 text-center">STATUS</th>
+                        <th class="py-2 px-1.5">SKEMA</th>
+                        <th class="py-2 px-1.5 text-center">kVA</th>
+                        <th class="py-2 px-1.5 text-center">UTIL PLN</th>
+                        <th class="py-2 px-1.5 text-center">UTIL MCB</th>
+                        <th class="py-2 px-1.5 text-center">STATUS</th>
                       </tr>
                     </thead>
-                    <tbody id="sim-matrix-tbody" class="divide-y divide-slate-100 font-mono text-[11px]">
-                      <!-- Generated Dynamically via JS -->
-                    </tbody>
+                    <tbody id="sim-matrix-tbody" class="divide-y divide-slate-100 font-mono text-[11px]"></tbody>
                   </table>
                 </div>
-
-                <!-- Panduan Standard Utilisasi Info Box -->
-                <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-[11px] space-y-1.5 text-slate-600">
-                  <div class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
-                    <i data-lucide="info" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
-                    <span>Panduan Standard Utilisasi:</span>
-                  </div>
-                  <div class="space-y-1 pl-5 text-[10px]">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      <span><strong>&lt; 65%:</strong> Zona Hijau / Sangat Aman (Margin charging baterai cukup)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                      <span><strong>65% – 75%:</strong> Zona Kuning / Warning (Perlu monitoring beban)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                      <span><strong>&gt; 75%:</strong> Zona Merah / Trip Risk (Wajib penyeimbangan atau upgrade)</span>
-                    </div>
-                  </div>
-                </div>
-
               </div>
-
             </div>
 
           </div>
         </div>
 
-        <!-- ================= VIEW 2: EXECUTIVE NOP DASHBOARD ================= -->
+        <!-- ================= VIEW 3: EXECUTIVE NOP DASHBOARD ================= -->
         <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-          <!-- Summary Cards Top -->
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
             <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
               <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Total Site</span>
@@ -551,7 +647,7 @@
             <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
               <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Baterai</span>
               <div id="dash-batt-lithium" class="text-2xl font-black text-slate-900">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5">Lithium • <span id="dash-batt-stolen" class="text-rose-600 font-bold">0</span> Hilang/Risk</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Lithium • <span id="dash-batt-stolen" class="text-rose-600 font-bold">0</span> Hilang</div>
             </div>
             <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
               <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Rectifier</span>
@@ -566,15 +662,12 @@
             <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
               <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Genset (DG)</span>
               <div id="dash-dg-active" class="text-2xl font-black text-purple-700">0</div>
-              <div class="text-[11px] text-slate-500 mt-0.5">Unit Active di Site</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Unit Active</div>
             </div>
           </div>
 
-          <!-- NOP Table -->
           <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-            <div class="p-4 sm:p-5 border-b border-slate-100">
-              <h3 class="font-bold text-sm text-slate-900">Rekap Kesehatan Infrastruktur per NOP</h3>
-            </div>
+            <div class="p-4 sm:p-5 border-b border-slate-100"><h3 class="font-bold text-sm text-slate-900">Rekap Kesehatan Infrastruktur per NOP</h3></div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs border-collapse">
                 <thead class="bg-slate-50 text-slate-600 uppercase font-semibold text-[10px] border-b border-slate-200">
@@ -596,9 +689,8 @@
           </div>
         </div>
 
-        <!-- ================= VIEW 3: MASTER DATA 114 PARAMETERS (7 MODULES) ================= -->
+        <!-- ================= VIEW 4: MASTER DATA 114 PARAMETERS ================= -->
         <div id="view-modules" class="hidden flex-1 flex flex-col min-h-0 bg-white">
-          <!-- Filter Bar -->
           <div class="p-3.5 border-b border-slate-200 bg-white flex flex-wrap gap-2.5 items-center justify-between">
             <div class="flex items-center gap-2 flex-1 max-w-md min-w-[240px]">
               <div class="relative w-full">
@@ -606,7 +698,6 @@
                 <input type="text" id="global-search-input" oninput="applyFilters()" placeholder="Cari Site ID, Site Name, NOP, Kota, PIC..." class="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-rose-500" />
               </div>
             </div>
-
             <div class="flex items-center gap-2">
               <select id="filter-nop" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5">
                 <option value="ALL">Semua NOP</option>
@@ -627,7 +718,6 @@
             </div>
           </div>
 
-          <!-- Table Content -->
           <div class="flex-1 overflow-auto relative">
             <table class="w-full border-collapse text-left text-xs whitespace-nowrap">
               <thead id="table-header" class="sticky top-0 bg-slate-100 border-b border-slate-200 z-10 text-slate-600 font-semibold"></thead>
@@ -635,7 +725,6 @@
             </table>
           </div>
 
-          <!-- Pagination Footer -->
           <div class="h-12 border-t border-slate-200 bg-slate-50 px-4 flex items-center justify-between text-xs text-slate-500">
             <div id="pagination-info">Menampilkan 0 - 0 dari 0 data</div>
             <div class="flex items-center gap-1.5">
@@ -650,7 +739,7 @@
     </div>
   </div>
 
-  <!-- ================= 5. FULL DETAIL MODAL ================= -->
+  <!-- ================= 5. DETAIL MODAL ================= -->
   <div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
     <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
@@ -663,7 +752,7 @@
           <p id="modal-site-name" class="text-xs text-slate-500 mt-1 font-sans">MM2100</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="loadSiteToSimulator(activeModalSite['Site ID']); closeDetailModal();" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+          <button onclick="loadSiteToSimulator(activeModalSite['Site ID']); switchViewMode('simulator'); closeDetailModal();" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
             <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Buka di Simulator
           </button>
           <button onclick="closeDetailModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-xl bg-slate-100 transition">
@@ -862,9 +951,11 @@
     ];
 
     let rawSitesData = [];
+    let trackingLogsData = [];
+    let activeTrackingFilter = 'ALL';
     let filteredData = [];
     let currentModuleIndex = 0;
-    let currentActiveView = 'simulator';
+    let currentActiveView = 'tracking';
     let currentPage = 1;
     let pageSize = 50;
     let activeModalSite = null;
@@ -885,6 +976,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       checkSavedFirebaseConfig();
+      loadLocalTrackingLogs();
       recalculateEngineering();
     });
 
@@ -934,6 +1026,7 @@
         }
         realtimeDb = firebase.database();
         
+        // Listen to sites data
         const rootRef = realtimeDb.ref();
         rootRef.on('value', (snapshot) => {
           const val = snapshot.val();
@@ -951,7 +1044,6 @@
               rawSitesData = list.filter(item => item && (item['Site ID'] || item.site_id || item['Site Name']));
               document.getElementById('sim-badge-site-count').textContent = `● ${rawSitesData.length.toLocaleString()} Sites`;
               document.getElementById('stat-total').textContent = rawSitesData.length.toLocaleString();
-              document.getElementById('stat-loaded').textContent = `${rawSitesData.length.toLocaleString()} Site`;
               
               populateFilters();
               applyFilters();
@@ -959,6 +1051,14 @@
               
               document.getElementById('firebase-status-badge').classList.remove('hidden');
               document.getElementById('firebase-status-text').textContent = `Realtime: ${rawSitesData.length} Sites`;
+            }
+
+            // Also check realtime tracking logs
+            if (val.activity_tracking) {
+              const logs = Array.isArray(val.activity_tracking) ? val.activity_tracking : Object.values(val.activity_tracking);
+              trackingLogsData = logs;
+              renderTrackingTable();
+              updateTrackingMetrics();
             }
           }
         });
@@ -971,7 +1071,7 @@
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
       lucide.createIcons();
-      switchViewMode('simulator');
+      switchViewMode('tracking');
     }
 
     function handleLogout() {
@@ -986,22 +1086,30 @@
     function switchViewMode(mode) {
       currentActiveView = mode;
       
+      document.getElementById('view-tracking').classList.add('hidden');
       document.getElementById('view-simulator').classList.add('hidden');
       document.getElementById('view-dashboard').classList.add('hidden');
       document.getElementById('view-modules').classList.add('hidden');
 
+      document.getElementById('btn-view-track').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
       document.getElementById('btn-view-sim').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
       document.getElementById('btn-view-dash').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
       document.getElementById('btn-view-mods').className = "px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium rounded-xl text-xs flex items-center gap-1.5 transition";
 
-      if (mode === 'simulator') {
+      if (mode === 'tracking') {
+        document.getElementById('view-tracking').classList.remove('hidden');
+        document.getElementById('btn-view-track').className = "px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
+        document.getElementById('active-modul-title').textContent = "Tracking Harian • Mingguan • Rekap Bulanan";
+        renderTrackingTable();
+        updateTrackingMetrics();
+      } else if (mode === 'simulator') {
         document.getElementById('view-simulator').classList.remove('hidden');
         document.getElementById('btn-view-sim').className = "px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
         document.getElementById('active-modul-title').textContent = "Profil & Kontrak Site R12 • Simulasi Daya PLN";
         recalculateEngineering();
       } else if (mode === 'dashboard') {
         document.getElementById('view-dashboard').classList.remove('hidden');
-        document.getElementById('btn-view-dash').className = "px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
+        document.getElementById('btn-view-dash').className = "px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-bold rounded-xl text-xs flex items-center gap-1.5 transition";
         document.getElementById('active-modul-title').textContent = "Dashboard Ringkasan Eksekutif & Kondisi NOP";
         calculateDashboardMetrics();
       } else if (mode === 'modules') {
@@ -1012,23 +1120,22 @@
       lucide.createIcons();
     }
 
-    // ================= SIMULATOR AUTO-COMPLETE & SEARCH =================
-    function handleSimSiteSearch(query) {
-      const resContainer = document.getElementById('sim-search-results');
+    // ================= TRACKING HUB LOGIC (DAILY, WEEKLY, COMPILE MONTHLY) =================
+    function handleTrackSiteSearch(query) {
+      const resContainer = document.getElementById('track-search-results');
       if (!query || query.length < 2) {
         resContainer.classList.add('hidden');
         return;
       }
-
       const q = query.toLowerCase().trim();
       const matches = rawSitesData.filter(s => {
         const id = String(s['Site ID'] || '').toLowerCase();
         const name = String(s['Site Name'] || '').toLowerCase();
         return id.includes(q) || name.includes(q);
-      }).slice(0, 10);
+      }).slice(0, 8);
 
       if (matches.length === 0) {
-        resContainer.innerHTML = '<div class="p-3 text-slate-400 text-center">Site tidak ditemukan</div>';
+        resContainer.innerHTML = '<div class="p-2.5 text-slate-400 text-center">Site tidak ditemukan</div>';
         resContainer.classList.remove('hidden');
         return;
       }
@@ -1036,16 +1143,226 @@
       let html = '';
       matches.forEach(s => {
         html += `
+          <div onclick="selectTrackSite('${escapeQuotes(s['Site ID'])}', '${escapeQuotes(s['NOP'])}')" class="p-2 hover:bg-blue-50 cursor-pointer flex items-center justify-between transition">
+            <span class="font-bold text-slate-900">${s['Site ID']} <span class="text-slate-500 font-normal">(${s['Site Name'] || '-'})</span></span>
+            <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">${s['NOP'] || '-'}</span>
+          </div>
+        `;
+      });
+      resContainer.innerHTML = html;
+      resContainer.classList.remove('hidden');
+    }
+
+    function selectTrackSite(siteId, nop) {
+      document.getElementById('track-input-search').value = siteId;
+      document.getElementById('track-site-id').value = siteId;
+      document.getElementById('track-nop').value = nop || 'NOP BOGOR';
+      document.getElementById('track-search-results').classList.add('hidden');
+    }
+
+    function handleSaveTrackingLog(e) {
+      e.preventDefault();
+      const siteId = document.getElementById('track-site-id').value.trim();
+      const nop = document.getElementById('track-nop').value.trim();
+      const category = document.getElementById('track-category').value;
+      const week = document.getElementById('track-period-week').value;
+      const status = document.getElementById('track-status').value;
+      const pic = document.getElementById('track-pic').value.trim();
+      const planAction = document.getElementById('track-plan-action').value.trim();
+
+      if (!siteId) {
+        alert("Pilih Site ID terlebih dahulu!");
+        return;
+      }
+
+      const newLog = {
+        id: "LOG_" + Date.now(),
+        siteId,
+        nop,
+        category,
+        week,
+        status,
+        pic,
+        planAction,
+        timestamp: new Date().toISOString(),
+        dateStr: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+      };
+
+      trackingLogsData.unshift(newLog);
+      saveLocalTrackingLogs();
+      renderTrackingTable();
+      updateTrackingMetrics();
+
+      // Sync to Firebase realtime
+      if (realtimeDb) {
+        realtimeDb.ref('activity_tracking').set(trackingLogsData);
+      }
+
+      // Reset Form
+      document.getElementById('track-input-search').value = "";
+      document.getElementById('track-site-id').value = "";
+      document.getElementById('track-nop').value = "";
+      document.getElementById('track-plan-action').value = "";
+      alert(`Log aktivitas untuk Site ${siteId} berhasil disimpan dan disinkronkan!`);
+    }
+
+    function setTrackingFilter(filterType) {
+      activeTrackingFilter = filterType;
+      
+      ['all', 'daily', 'weekly', 'monthly'].forEach(f => {
+        document.getElementById(`tbtn-${f}`).className = "px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg";
+      });
+      document.getElementById(`tbtn-${filterType.toLowerCase()}`).className = "px-3 py-1 bg-white text-blue-700 rounded-lg shadow-xs font-bold";
+
+      renderTrackingTable();
+    }
+
+    function renderTrackingTable() {
+      const tbody = document.getElementById('tracking-logs-tbody');
+      
+      let filtered = trackingLogsData;
+      const todayIso = new Date().toISOString().slice(0, 10);
+
+      if (activeTrackingFilter === 'DAILY') {
+        filtered = trackingLogsData.filter(l => (l.timestamp || '').startsWith(todayIso));
+      } else if (activeTrackingFilter === 'WEEKLY') {
+        filtered = trackingLogsData.filter(l => l.week === 'W4' || l.week === 'W3');
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-10 text-center text-slate-400">
+              <i data-lucide="clipboard-list" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+              <p>Belum ada catatan log tracking aktivitas.</p>
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        document.getElementById('track-table-count').textContent = `Menampilkan 0 log tracking`;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(log => {
+        let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">OPEN</span>';
+        if (log.status === 'IN_PROGRESS') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">IN PROGRESS</span>';
+        } else if (log.status === 'CLOSED') {
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">CLOSED</span>';
+        }
+
+        html += `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-3 text-slate-500 font-mono text-[10px]">${log.dateStr || log.timestamp?.slice(0,16) || '-'}</td>
+            <td class="py-2.5 px-3 font-bold text-slate-900">${log.siteId} <span class="block text-[10px] text-slate-400 font-normal">${log.nop}</span></td>
+            <td class="py-2.5 px-3 font-semibold text-slate-700"><span class="px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">${log.category} • ${log.week || 'W4'}</span></td>
+            <td class="py-2.5 px-3 text-slate-800 max-w-xs break-words">${log.planAction}</td>
+            <td class="py-2.5 px-3 font-medium text-slate-700">${log.pic}</td>
+            <td class="py-2.5 px-3 text-center">${statusBadge}</td>
+            <td class="py-2.5 px-3 text-center">
+              <button onclick="toggleLogStatus('${log.id}')" title="Ubah Status Open/Closed" class="p-1 hover:bg-slate-200 rounded text-slate-600 transition">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      document.getElementById('track-table-count').textContent = `Menampilkan ${filtered.length} dari ${trackingLogsData.length} total log`;
+      lucide.createIcons();
+    }
+
+    function toggleLogStatus(logId) {
+      const log = trackingLogsData.find(l => l.id === logId);
+      if (!log) return;
+      log.status = log.status === 'CLOSED' ? 'IN_PROGRESS' : 'CLOSED';
+      saveLocalTrackingLogs();
+      renderTrackingTable();
+      updateTrackingMetrics();
+      if (realtimeDb) realtimeDb.ref('activity_tracking').set(trackingLogsData);
+    }
+
+    function updateTrackingMetrics() {
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const openCount = trackingLogsData.filter(l => l.status !== 'CLOSED').length;
+      const todayCount = trackingLogsData.filter(l => (l.timestamp || '').startsWith(todayIso)).length;
+      const closedCount = trackingLogsData.filter(l => l.status === 'CLOSED').length;
+      
+      const total = trackingLogsData.length;
+      const rate = total > 0 ? Math.round((closedCount / total) * 100) : 100;
+
+      document.getElementById('track-daily-open-count').textContent = openCount;
+      document.getElementById('track-daily-today-count').textContent = todayCount;
+      document.getElementById('track-weekly-done-count').textContent = closedCount;
+      document.getElementById('track-monthly-rate').textContent = `${rate}%`;
+      document.getElementById('stat-track-count').textContent = `${total} Log`;
+    }
+
+    function saveLocalTrackingLogs() {
+      localStorage.setItem('sme_tracking_logs', JSON.stringify(trackingLogsData));
+    }
+
+    function loadLocalTrackingLogs() {
+      const saved = localStorage.getItem('sme_tracking_logs');
+      if (saved) {
+        try {
+          trackingLogsData = JSON.parse(saved);
+        } catch(e) {
+          trackingLogsData = [];
+        }
+      } else {
+        // Seed default initial logs from existing excel remark samples
+        trackingLogsData = [
+          { id: "LOG_1", siteId: "CBN120", nop: "NOP BOGOR", category: "POWER_PLN", week: "W4", status: "IN_PROGRESS", pic: "Agus / PLN", planAction: "Ajukan penambahan daya PLN dari 7.7 kVA ke 11 kVA karena beban 96%", timestamp: new Date().toISOString(), dateStr: "Hari ini, 09:30" },
+          { id: "LOG_2", siteId: "BKS003", nop: "NOP BEKASI", category: "BATTERY", week: "W4", status: "OPEN", pic: "Dianro", planAction: "Baterai Lithium 100Ah drop, jadwalkan penggantian modul", timestamp: new Date().toISOString(), dateStr: "Kemarin, 14:15" },
+          { id: "LOG_3", siteId: "BKS002", nop: "NOP KARAWANG", category: "AIR_COND", week: "W3", status: "CLOSED", pic: "Mitra AC", planAction: "Perbaikan kompresor AC outdoor selesai, temperatur shelter 22°C", timestamp: new Date().toISOString(), dateStr: "22 Agu, 11:00" }
+        ];
+        saveLocalTrackingLogs();
+      }
+      renderTrackingTable();
+      updateTrackingMetrics();
+    }
+
+    function exportTrackingReport(type) {
+      if (type === 'json') {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(trackingLogsData, null, 2));
+        const a = document.createElement('a');
+        a.setAttribute("href", dataStr);
+        a.setAttribute("download", `SME_TRACKING_COMPILE_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } else {
+        // Export Excel Spreadsheet
+        const ws = XLSX.utils.json_to_sheet(trackingLogsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Tracking_Compiled");
+        XLSX.writeFile(wb, `SME_MONTHLY_REKAP_${new Date().toISOString().slice(0,10)}.xlsx`);
+      }
+    }
+
+    // ================= SIMULATOR AUTO-COMPLETE & FORMULAS =================
+    function handleSimSiteSearch(query) {
+      const resContainer = document.getElementById('sim-search-results');
+      if (!query || query.length < 2) { resContainer.classList.add('hidden'); return; }
+      const q = query.toLowerCase().trim();
+      const matches = rawSitesData.filter(s => String(s['Site ID'] || '').toLowerCase().includes(q) || String(s['Site Name'] || '').toLowerCase().includes(q)).slice(0, 10);
+      if (matches.length === 0) {
+        resContainer.innerHTML = '<div class="p-3 text-slate-400 text-center">Site tidak ditemukan</div>';
+        resContainer.classList.remove('hidden');
+        return;
+      }
+      let html = '';
+      matches.forEach(s => {
+        html += `
           <div onclick="loadSiteToSimulator('${escapeQuotes(s['Site ID'])}')" class="p-2.5 hover:bg-rose-50 cursor-pointer flex items-center justify-between transition">
-            <div>
-              <span class="font-bold text-slate-900">${s['Site ID']}</span>
-              <span class="text-slate-500 ml-1.5">• ${s['Site Name'] || '-'}</span>
-            </div>
+            <div><span class="font-bold text-slate-900">${s['Site ID']}</span><span class="text-slate-500 ml-1.5">• ${s['Site Name'] || '-'}</span></div>
             <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${s['NOP'] || '-'}</span>
           </div>
         `;
       });
-
       resContainer.innerHTML = html;
       resContainer.classList.remove('hidden');
     }
@@ -1053,15 +1370,12 @@
     function loadSiteToSimulator(siteId) {
       document.getElementById('sim-search-results').classList.add('hidden');
       document.getElementById('sim-search-input').value = "";
-
       const s = rawSitesData.find(item => String(item['Site ID']).trim() === String(siteId).trim());
       if (!s) return;
 
       document.getElementById('sim-site-id').value = s['Site ID'] || '-';
       document.getElementById('sim-nop').value = s['NOP'] || '-';
       document.getElementById('sim-site-name').value = s['Site Name'] || '-';
-
-      // Telemetry Volt & Amper
       document.getElementById('sim-volt-r').value = parseFloat(s['VoltR']) || 220.0;
       document.getElementById('sim-volt-s').value = parseFloat(s['VoltS']) || 220.0;
       document.getElementById('sim-volt-t').value = parseFloat(s['VoltT']) || 220.0;
@@ -1070,10 +1384,8 @@
       document.getElementById('sim-amp-t').value = parseFloat(s['AmperT']) || 5.0;
       document.getElementById('sim-pf').value = parseFloat(s['Power Factor']) || 0.90;
 
-      // Contract Capacity
       const capVal = parseFloat(s['Capacity']) || 33000;
       const phaseVal = String(s['Phase'] || '').includes('1') ? 1 : 3;
-      
       const select = document.getElementById('sim-contract-select');
       let found = false;
       for (let i = 0; i < select.options.length; i++) {
@@ -1084,20 +1396,16 @@
           break;
         }
       }
-      if (!found) {
-        select.selectedIndex = 5; // Default 33 kVA
-      }
+      if (!found) select.selectedIndex = 5;
       handleContractChange();
     }
 
     function handleContractChange() {
-      const selectVal = document.getElementById('sim-contract-select').value;
-      const [cap, phase, mcb] = selectVal.split('|');
+      const [cap, phase, mcb] = document.getElementById('sim-contract-select').value.split('|');
       document.getElementById('sim-mcb-rating').value = mcb;
       recalculateEngineering();
     }
 
-    // ================= CORE ELECTRICAL ENGINEERING & SIMULATION FORMULAS =================
     function recalculateEngineering() {
       const vr = parseFloat(document.getElementById('sim-volt-r').value) || 0;
       const vs = parseFloat(document.getElementById('sim-volt-s').value) || 0;
@@ -1111,43 +1419,30 @@
       const contractKva = (parseFloat(capStr) || 33000) / 1000;
       const ratingMcb = parseFloat(document.getElementById('sim-mcb-rating').value) || parseFloat(defaultMcb) || 50;
 
-      // Calculations
       const vAvg = (vr + vs + vt) / 3;
       const iAvg = (ir + is + it) / 3;
       const fasaKritis = Math.max(ir, is, it);
-      
-      // Total Apparent Power (kVA)
       const totalKva = (vr * ir + vs * is + vt * it) / 1000;
       const activePowerKw = totalKva * pf;
-
-      // Utilizations
       const utilPln = (totalKva / contractKva) * 100;
       const utilMcb = (fasaKritis / ratingMcb) * 100;
-
-      // Unbalance %
       const maxDiff = Math.max(Math.abs(ir - iAvg), Math.abs(is - iAvg), Math.abs(it - iAvg));
       const unbalance = iAvg > 0 ? (maxDiff / iAvg) * 100 : 0;
-
-      // Margins
       const marginMcb = Math.max(0, ratingMcb - fasaKritis);
       const marginPln = Math.max(0, contractKva - totalKva);
 
-      // DOM Updates (Middle Column)
       document.getElementById('sim-total-beban-kva').innerHTML = `${totalKva.toFixed(2)} <span class="text-sm font-bold text-slate-500">kVA</span>`;
       document.getElementById('sim-util-pln-percent').textContent = `${utilPln.toFixed(1)}%`;
       document.getElementById('sim-fasa-kritis-amp').innerHTML = `${fasaKritis.toFixed(2)} <span class="text-sm font-bold text-rose-400">A</span>`;
       document.getElementById('sim-util-mcb-percent').textContent = `${utilMcb.toFixed(1)}%`;
-
       document.getElementById('sim-active-power').value = `${activePowerKw.toFixed(2)} kW`;
       document.getElementById('sim-v-avg').textContent = `${vAvg.toFixed(1)} V`;
       document.getElementById('sim-i-avg').textContent = `${iAvg.toFixed(2)} A`;
       document.getElementById('sim-unbalance').textContent = `${unbalance.toFixed(1)}%`;
-      document.getElementById('sim-unbalance').className = unbalance > 20 ? "font-bold text-amber-600" : "font-bold text-emerald-600";
       document.getElementById('sim-p-total').textContent = `${activePowerKw.toFixed(2)} kW`;
       document.getElementById('sim-mcb-margin').textContent = `${marginMcb.toFixed(2)} A`;
       document.getElementById('sim-pln-margin').textContent = `${marginPln.toFixed(2)} kVA`;
 
-      // Status Banner & Recommendation Evaluation
       const statusCard = document.getElementById('sim-status-card');
       const statusTitle = document.getElementById('sim-status-title');
       const statusDesc = document.getElementById('sim-status-desc');
@@ -1155,61 +1450,54 @@
       const recoText = document.getElementById('sim-rekomendasi-text');
 
       if (utilMcb > 75 || utilPln > 75) {
-        statusCard.className = "status-banner-danger text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusCard.className = "status-banner-danger text-white rounded-2xl p-5 shadow-lg";
         statusTitle.textContent = "NEED UPGRADE DAYA";
         statusDesc.textContent = `Utilisasi Beban Kritis (PLN: ${utilPln.toFixed(1)}% / MCB: ${utilMcb.toFixed(1)}%)`;
         recoBox.className = "p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs space-y-1 mt-2";
-        recoText.textContent = `OVERLOAD RISK: Beban total ${totalKva.toFixed(2)} kVA / Arus fasa ${fasaKritis.toFixed(1)}A mendekati batas trip MCB ${ratingMcb}A (${utilMcb.toFixed(1)}%). Tindakan: Ajukan penambahan daya PLN ke kapasitas lebih tinggi agar tersedia margin charging baterai.`;
+        recoText.textContent = `OVERLOAD RISK: Beban total ${totalKva.toFixed(2)} kVA mendekati batas trip MCB. Segera ajukan penambahan daya PLN.`;
       } else if (utilMcb > 65 || utilPln > 65 || unbalance > 25) {
-        statusCard.className = "status-banner-warning text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusCard.className = "status-banner-warning text-white rounded-2xl p-5 shadow-lg";
         statusTitle.textContent = "PERLU MONITORING BEBAN";
         statusDesc.textContent = `Utilisasi Sedang / Unbalance Fasa (${unbalance.toFixed(1)}%)`;
         recoBox.className = "p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-1 mt-2";
-        recoText.textContent = `WARNING: Terdeteksi unbalance arus antarfasa sebesar ${unbalance.toFixed(1)}% atau utilisasi mendekati batas aman. Lakukan rebalancing fasa pada ACPDB agar beban terdistribusi merata.`;
+        recoText.textContent = `WARNING: Terdeteksi unbalance arus (${unbalance.toFixed(1)}%). Lakukan rebalancing fasa pada ACPDB.`;
       } else {
-        statusCard.className = "status-banner-safe text-white rounded-2xl p-5 shadow-lg relative overflow-hidden";
+        statusCard.className = "status-banner-safe text-white rounded-2xl p-5 shadow-lg";
         statusTitle.textContent = "KAPASITAS SANGAT AMAN";
         statusDesc.textContent = `Utilisasi Ideal (PLN: ${utilPln.toFixed(1)}% / MCB: ${utilMcb.toFixed(1)}%)`;
         recoBox.className = "p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1 mt-2";
-        recoText.textContent = `Kondisi kelistrikan sangat stabil. Sisa margin daya PLN (${marginPln.toFixed(2)} kVA) dan margin arus MCB (${marginMcb.toFixed(2)} A) sangat aman untuk penambahan perangkat RAN / Rectifier baru.`;
+        recoText.textContent = `Kondisi kelistrikan sangat stabil. Sisa margin daya PLN (${marginPln.toFixed(2)} kVA) sangat aman.`;
       }
 
-      // Render Multi-Schema Matrix (Right Column)
       renderMultiSchemaMatrix(totalKva, fasaKritis);
     }
 
     function renderMultiSchemaMatrix(totalKva, fasaKritis) {
       const tbody = document.getElementById('sim-matrix-tbody');
       let html = '';
-
       STANDARD_3PHASE_SCHEMAS.forEach(sch => {
         const predUtilPln = (totalKva / sch.kva) * 100;
         const predUtilMcb = (fasaKritis / sch.mcb) * 100;
-
         let badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Sangat Aman</span>';
         if (predUtilMcb > 75 || predUtilPln > 75) {
           badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Warning (Trip Risk)</span>';
         } else if (predUtilMcb > 65 || predUtilPln > 65) {
           badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Perlu Monitor</span>';
         }
-
-        const mcbClass = predUtilMcb > 75 ? "text-rose-600 font-bold" : "text-slate-700";
-
         html += `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-2.5 px-2 font-bold text-slate-800">${sch.name}</td>
             <td class="py-2.5 px-2 text-center text-slate-700">${sch.kva.toFixed(1)} kVA</td>
             <td class="py-2.5 px-2 text-center font-bold text-slate-900">${predUtilPln.toFixed(1)}%</td>
-            <td class="py-2.5 px-2 text-center ${mcbClass}">${predUtilMcb.toFixed(1)}%</td>
+            <td class="py-2.5 px-2 text-center">${predUtilMcb.toFixed(1)}%</td>
             <td class="py-2.5 px-2 text-center">${badge}</td>
           </tr>
         `;
       });
-
       tbody.innerHTML = html;
     }
 
-    // ================= EXECUTIVE DASHBOARD & 7 MODULES LOGIC =================
+    // ================= DASHBOARD & 7 MODULES MASTER TABLE =================
     function calculateDashboardMetrics() {
       if (!rawSitesData.length) return;
       const total = rawSitesData.length;
@@ -1336,8 +1624,8 @@
         html += `<tr class="hover:bg-slate-50 transition border-b border-slate-200">`;
         html += `<td class="py-2 px-3 text-center text-slate-400 font-mono">${start + i + 1}</td>`;
         html += `<td class="py-2 px-3 flex items-center gap-1.5">
-          <button onclick="openDetailModal('${escapeQuotes(row['Site ID'] || '')}')" class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded text-[11px] font-sans font-medium">Detail</button>
-          <button onclick="loadSiteToSimulator('${escapeQuotes(row['Site ID'] || '')}'); switchViewMode('simulator');" class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[11px] font-sans font-medium">Sim</button>
+          <button onclick="openDetailModal('${escapeQuotes(row['Site ID'] || '')}')" class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded text-[11px]">Detail</button>
+          <button onclick="loadSiteToSimulator('${escapeQuotes(row['Site ID'] || '')}'); switchViewMode('simulator');" class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[11px]">Sim</button>
         </td>`;
         mod.columns.forEach(col => {
           let val = row[col.key] !== undefined && row[col.key] !== null ? String(row[col.key]) : "-";
@@ -1373,10 +1661,7 @@
       if (currentActiveView === 'modules') renderTableData();
     }
 
-    function populateFilters() {
-      // filters populated
-    }
-
+    function populateFilters() {}
     function updatePaginationInfo() {
       const start = filteredData.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
       const end = Math.min(currentPage * pageSize, filteredData.length);
@@ -1442,7 +1727,7 @@
       for (let i = 0; i < 7; i++) {
         const btn = document.getElementById(`modal-tab-${i}`);
         if (i === tabIndex) {
-          btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg bg-rose-600 text-white font-semibold";
+          btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold";
         } else {
           btn.className = "modal-tab-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-200 font-medium";
         }
